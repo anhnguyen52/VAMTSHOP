@@ -1,0 +1,102 @@
+<app-header class="sticky top-0 z-50"></app-header>
+
+<div class="max-w-6xl mx-auto my-10 flex flex-row justify-around">
+    <div class="w-[260px]">
+        <img src="../../../assets/image/shop.jpg" alt="" 
+        class="w-full h-full rounded-lg object-cover shadow-2xl">
+    </div>
+    <div class="w-[600px]">
+        <h1 class="text-[30px] font-bold mb-2">Introduce about VAMT</h1>
+        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quis numquam blanditiis voluptas, 
+        ex provident sed porro ipsum illo dolore nesciunt tempora quas accusamus nam optio, autem 
+        cumque excepturi? Quo, quia! lorem ipsum dolor sit amet consectetur adipisicing elit.
+        Quis numquam blanditiis voluptas, ex provident sed porro ipsum illo dolore nesciunt tempora
+        quas accusamus nam optio, autem cumque excepturi? Quo, quia!
+        <h3 class="font-bold text-lg mb-3 mt-[200px]">
+            Enjoy the great cold
+        </h3>
+        <p class="text-gray-500">vamtshop.com</p>
+    </div>
+</div>
+
+<div class="anhbia my-20">
+    <img src="../../../assets/image/anhbia3.jpg" alt="" class="w-full h-full object-cover ">
+</div>
+
+<h1 class="text-center text-[50px] font-bold mb-10">Products</h1>
+<div class=" max-w-5xl category flex flex-row justify-around  mx-auto ">
+  <div class="text-[18px] font-bold nav-filter">Accessories</div>
+  <div class="text-[18px] font-bold nav-filter">Bags</div>
+  <div class="text-[18px] font-bold nav-filter">Clothing</div>
+  <div class="text-[18px] font-bold nav-filter">Jewelry</div>
+</div>
+
+<div class=" mx-auto mb-[120px]">
+    <div class="newProduct text-center mb-[100px]">
+        <div class="grid grid-cols-4 gap-10 my-10">
+          <div *ngFor="let product of newProducts" 
+                class="bg-white w-[400px] mx-auto p-4 flex flex-col min-h-[320px]
+                transition duration-300 ease-in-out transform hover:scale-110  cursor-pointer " (click)="goToDetailProduct(product._id)">
+              <div>
+                <img src="{{product.image_urls[0]}}" alt="" class="w-full rounded-t-lg">
+              </div>
+              <div>
+                <h1 class="text-[20px] font-bold text-gray-800 mt-2">{{product.product_name}}</h1>
+              </div>
+              <div class="mt-auto">
+                <p class="text-gray-500 text-[14px]">{{product.price}} vnđ</p>
+              </div>
+          </div>
+        </div>
+    </div> 
+    
+    <h1 class="text-center text-[50px] font-bold mb-10">Collections</h1>
+    <div class="collection grid grid-cols-2 gap-5 max-w-4xl mx-auto">
+        <div class="collection-item bg-black w-[400px] h-[400px] mx-auto">
+          <img src="../../../assets/image/collection-bg.jpg" alt="" class="w-full h-full object-cover rounded-lg">
+          <div class=" absolute top-0 left-2 w-full flex flex-col items-center justify-center">
+            <h1 class="text-[50px] font-bold text-white">THE ROCK 2025 Collection</h1>
+          </div>
+        </div>
+        <div class="collection-item bg-black w-[400px] h-[400px] mx-auto">
+          <img src="../../../assets/image/collection2.jpg" alt="" class="w-full h-full object-cover rounded-lg">
+          <div class=" absolute top-0 left-2 w-full flex flex-col items-center justify-center">
+            <h1 class="text-[50px] font-bold text-white">THE SPRING 2026 Collection</h1>
+          </div>
+        </div>
+        <div class="collection-item bg-black w-[400px] h-[400px] mx-auto">
+          <img src="../../../assets/image/collection3.jpg" alt="" class="w-full h-full object-cover rounded-lg">
+          <div class=" absolute top-0 left-2 w-full flex flex-col items-center justify-center">
+            <h1 class="text-[50px] font-bold text-white">HYBERNATE 26s Collection</h1>
+          </div>
+        </div>
+        <div class="collection-item bg-black w-[400px] h-[400px] mx-auto">
+          <img src="../../../assets/image/collection4.jpg" alt="" class="w-full h-full object-cover rounded-lg">
+          <div class=" absolute top-0 left-2 w-full flex flex-col items-center justify-center">
+            <h1 class="text-[50px] font-bold text-white">FANTASY 2223 Collection</h1>
+          </div>
+        </div>
+    </div>
+</div>
+
+<div class="subcribe flex flex-col items-center">
+    <h1 class="text-center text-[50px] font-bold text-gray-800">Subscribe to join our community</h1>
+    <p class="text-center text-gray-400 text-[14px]">Stay Up To Date On New Releases, Interviews, Events, And Updates From Foundation's Community</p>
+    <input
+        type="text"
+        placeholder="Enter your email address"
+        class="border border-gray-300 rounded-[20px] p-2 w-[550px] h-[50px] my-10"
+    />
+    <button
+        type="button"
+        class="bg-black rounded-full w-[42px] h-[42px] relative transform -translate-x-[-250px] translate-y-[-86px]"
+    >
+    <span class="text-white">→</span>
+  </button>
+
+  <app-footer></app-footer>
+</div>
+
+
+
+

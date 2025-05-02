@@ -1,0 +1,32 @@
+<app-header></app-header>
+<div
+  class="w-[1000px] h-[480px] bg-black text-white mx-auto mt-[100px] rounded-[20px] flex flex-col justify-center items-center shadow-2xl shadow-slate-950 p-20"
+>
+  <div class="w-full h-full">
+    <p class="text-[30px] font-bold">Login</p>
+    <p class="text-[12px]">Welcome back! Please enter your details.</p>
+    <form class="flex flex-col gap-5 mt-5" [formGroup]="loginForm" (ngSubmit)="onLogin()">
+        <input
+            type="text"
+            formControlName="email"
+            placeholder="Email"
+            class="p-2 w-full h-[40px] text-[12px] my-2 rounded-md text-black "
+        />
+        <input
+            type="password"
+            placeholder="Password"
+            formControlName="password"
+            class="p-2 w-full h-[40px] text-[12px] my-2 rounded-md text-black "
+        />
+        <div class="flex flex-row justify-between mt-5 text-[12px] font-bold">
+            <div class="flex flex-row gap-5">
+                <button class="bg-white text-black w-[100px] h-[40px] rounded-md " type="submit">LOG IN</button>
+                <button (click)="gotoSignup()" >SIGN UP</button>
+            </div>
+            <div class="flex flex-row ">
+                <button>FORGOT PASSWORD ?</button>
+            </div>
+        </div>
+    </form>
+  </div>
+</div>

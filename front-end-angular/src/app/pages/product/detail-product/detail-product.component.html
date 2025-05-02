@@ -1,0 +1,89 @@
+<app-header></app-header>
+<app-spinner *ngIf="isLoading"></app-spinner>
+
+<div>
+    <div class="relative overflow-hidden max-w-[600px] mx-auto mt-[50px]">
+        <div 
+          #slideContainer
+          class="flex transition-transform duration-700 ease-in-out "
+          [ngStyle]="{'transform': 'translateX(-' + currentIndex * slideWidth + 'px)'}"
+        >
+          <div *ngFor="let url of product?.image_urls">
+            <div class="w-[500px] flex-shrink-0 translate-x-[50px]">
+              <img [src]="url" alt="" class="w-full rounded-t-lg" />
+            </div>
+          </div>
+        </div>
+      
+        <!-- Buttons -->
+        <div class="absolute top-[40%] right-[2%] z-10">
+          <button (click)="next()">
+            <fa-icon [icon]="faArrowRight" class="text-[30px] hover:text-gray-300 transition duration-500"></fa-icon>
+          </button>
+        </div>
+        <div class="absolute top-[40%] left-[2%] z-10">
+          <button (click)="prev()">
+            <fa-icon [icon]="faArrowLeft" class="text-[30px] hover:text-gray-300 transition duration-500"></fa-icon>
+          </button>
+        </div>
+
+        <!-- Thumbnail -->
+        <div class="flex justify-center gap-3 mt-6 overflow-x-auto px-4">
+            <div 
+            *ngFor="let url of product?.image_urls; let i = index"
+            (click)="currentIndex = i"
+            class="cursor-pointer border-2 rounded-md hover:border-black"
+            [ngClass]="{'border-black': currentIndex === i, 'border-transparent': currentIndex !== i}"
+            >
+                <img [src]="url" alt="" class="w-[60px] h-[60px] object-cover rounded" />
+            </div>
+        </div>
+      </div>
+      
+    <div class="max-w-5xl mx-auto mt-10">
+        <h1 class="text-[35px] font-bold text-center">{{product?.product_name}}</h1>
+        <p class="text-[16px] text-gray-700 font-sans text-center mb-[40px]">{{product?.price}} vnđ</p>
+        <div class="grid grid-cols-2 gap-[50px] h-[400px]">
+            <div class="text-center">
+                <select name="" id="" class="w-full h-[40px] bg-gray-100 text-[12px] font-bold p-2">
+                    <option value="">Size</option>
+                    <option value="">S</option>
+                    <option value="">M</option>
+                    <option value="">L</option>
+                    <option value="">XL</option>
+                </select>
+                <div class="mt-10 flex flex-col gap-4">
+                    <button class="w-full h-[40px] text-[14px] font-bold border-[2px] border-gray-950
+                    hover:border-[4px] hover:scale-105 transtion duration-100">ADD TO CART</button>
+                    <button class="w-full h-[40px] text-[14px] font-bold bg-black text-white
+                    hover:bg-white hover:text-black hover:border-gray-950 hover:border-[4px] hover:scale-105 transition duration-200">BUY NOW</button>
+                    <button class="w-full h-[40px] text-[14px] font-bold
+                    hover:border-gray-950 hover:border-[4px] hover:scale-105 transition duration-200">SHARE</button>
+                </div>
+            </div>
+            <div class="">
+                <p class="text-[14px] whitespace-pre-line text-gray-800">- {{product?.description}}</p>
+              </div>
+        </div>
+    </div>  
+    <div class="max-w-7xl mx-auto mt-[100px] mb-[50px]">
+        <h1 class="text-[35px] font-bold">You might also like</h1>
+        <div class="grid grid-cols-4 gap-10 my-10 text-center">
+          <div *ngFor="let product of newProducts" 
+                class="bg-white w-[300px] mx-auto p-4 flex flex-col min-h-[320px] rounded-lg
+                transition duration-300 ease-in-out transform hover:scale-110 cursor-pointer hover:shadow-lg" (click)="goToDetailProduct(product._id)">
+              <div>
+                <img src="{{product.image_urls[0]}}" alt="" class="w-full rounded-t-lg">
+              </div>
+              <div>
+                <h1 class="text-[20px] font-bold text-gray-800 mt-2">{{product.product_name}}</h1>
+              </div>
+              <div class="mt-auto">
+                <p class="text-gray-500 text-[14px]">{{product.price}} vnđ</p>
+              </div>
+          </div>
+        </div>
+    </div>
+    <hr>
+    <app-footer></app-footer>
+</div>

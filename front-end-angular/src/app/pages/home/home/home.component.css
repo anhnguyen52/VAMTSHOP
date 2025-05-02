@@ -1,0 +1,75 @@
+table {
+    width: 100%;
+    text-align: left;
+    margin-top: 70px;
+  }
+  th, td {
+    padding: 10px;
+    vertical-align: top;
+  }
+  th {
+    font-weight: bold;
+  }
+  td a {
+    color: gray;
+    text-decoration: none;
+  }
+  td a:hover {
+    text-decoration: underline;
+  }
+
+  .footer-bottom {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 14px;
+    color: gray;
+  }
+
+  .nav-filter{
+    position: relative;
+    display: inline-block;
+    transition: color 0.3s ease;
+    cursor: pointer;
+  }
+
+  .nav-filter::before{
+    content: "";
+    bottom: -4px;
+    width: 0px;
+    height: 2px;
+    background-color: black;
+    position: absolute;
+    transition: all 0.2s ease-in-out;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .nav-filter:hover::before{
+    width: 100%;
+  }
+
+  .nav-filter:hover{
+    transition: all 0.2s ease-in-out;
+    transform: scale(1.1);
+  }
+
+  .collection-item{
+    position: relative;
+    cursor: pointer;
+  }
+
+  .collection-item::after{
+    content: ""; 
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 400px;
+    height: 400px;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  .collection-item:hover::after{
+    transition: all 0.2s ease-in-out;
+    transform: scale(1.05);
+    opacity: 0.2;
+  }  
