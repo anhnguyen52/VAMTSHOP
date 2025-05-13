@@ -1,4 +1,4 @@
-<app-header></app-header>
+<app-header class="sticky top-0 z-50"></app-header>
 <app-spinner *ngIf="isLoading"></app-spinner>
 
 <div>
@@ -54,7 +54,7 @@
                 </select>
                 <div class="mt-10 flex flex-col gap-4">
                     <button class="w-full h-[40px] text-[14px] font-bold border-[2px] border-gray-950
-                    hover:border-[4px] hover:scale-105 transtion duration-100">ADD TO CART</button>
+                    hover:border-[4px] hover:scale-105 transtion duration-100" (click)="addProductToCart(product?._id)">ADD TO CART</button>
                     <button class="w-full h-[40px] text-[14px] font-bold bg-black text-white
                     hover:bg-white hover:text-black hover:border-gray-950 hover:border-[4px] hover:scale-105 transition duration-200">BUY NOW</button>
                     <button class="w-full h-[40px] text-[14px] font-bold

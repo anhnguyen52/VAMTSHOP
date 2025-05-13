@@ -6,6 +6,7 @@ const discountRouter = require("./discountRouter");
 const userRouter = require("./userRouter");
 const orderRouter = require("./orderRouter");
 const AuthRouter = require("./AuthRouter");
+const cartRouter = require("./cartRouter");
 
 const router = express.Router();
 
@@ -16,6 +17,7 @@ router.use("/discount", discountRouter);
 router.use("/user", userRouter);
 router.use("/order", orderRouter);
 router.use("/auth", AuthRouter);
+router.use("/cart", cartRouter);
 
 module.exports = router;
 
