@@ -212,7 +212,7 @@ export class CartComponent implements OnInit {
   }
 
   goBackHome(){
-    this.router.navigate(['/']);
+    this.router.navigate(['/ShopAll']);
   }
   
   goToLogin(){

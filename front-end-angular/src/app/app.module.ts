@@ -18,7 +18,10 @@ import { DetailProductComponent } from './pages/product/detail-product/detail-pr
 import { SpinnerComponent } from './components/spinner/spinner.component';
 import { CartComponent } from './pages/product/cart/cart.component';
 import { ToastComponent } from './components/toast/toast.component';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
+import {MatTreeModule} from '@angular/material/tree';
+import {MatExpansionModule} from '@angular/material/expansion';
 @NgModule({
   declarations: [
     AppComponent,
@@ -40,13 +43,16 @@ import { ToastComponent } from './components/toast/toast.component';
     FontAwesomeModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    MatTreeModule,
+    MatExpansionModule
   ],
   providers: [
     provideClientHydration(),
     provideHttpClient(withFetch()),
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
+    provideAnimationsAsync()
   ],
   bootstrap: [AppComponent]
 })
