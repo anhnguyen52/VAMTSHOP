@@ -1,6 +1,6 @@
 <div   [ngClass]="{'h-[0px]': isShrink, 'h-[23px]': !isShrink}"
     class="bg-black flex justify-center items-center h-8 transition-all duration-500 ">
-    <p class="text-white  ">Welcome to <strong>VAMT</strong> Shop</p>
+    <span class="text-white ">Welcome to <strong>VAMT</strong> Shop</span>
 </div>
 <div  [ngClass]="{'h-[60px]': isShrink, 'h-[100px]': !isShrink}"
       class="flex flex-row justify-around width-full h-20 bg-white transition-all duration-500  ">
@@ -33,8 +33,9 @@
       *ngIf="menuOpen" 
       class="menu fixed top-0 left-0 w-full h-screen bg-white z-50 overflow-y-auto animate-slide-down"
       >
-      <div class="bg-black flex justify-center items-center h-8">
-        <p class="text-white  ">Welcome to <strong>VAMT</strong> Shop</p>
+      <div   [ngClass]="{'h-[0px]': isShrink, 'h-[23px]': !isShrink}"
+          class="bg-black flex justify-center items-center h-8 transition-all duration-500 ">
+          <span class="text-white  ">Welcome to <strong>VAMT</strong> Shop</span>
       </div>
       <div class="flex flex-row justify-around mx-11 width-full h-20">
           <div class="flex flex-row gap-5 items-center">
@@ -45,8 +46,9 @@
                   </fa-icon>
                 </button>
           </div>
-          <div>
-              <button (click)="gotoHome()"><img class="w-[230px] mt-4 " src="../../../assets/image/LOGO.png" alt="logo"></button>
+           <div>
+              <button (click)="gotoHome()"><img [ngClass]="{ 'w-[200px]': isShrink, 'w-[300px]': !isShrink}"
+                class="w-[300px] pt-2 transition-all duration-500 " src="../../../assets/image/LOGO.png" alt="logo"></button>
           </div>
           <div class="flex flex-row gap-5 items-center">
               <button>
@@ -59,9 +61,11 @@
         </div>
         <ul class="flex flex-col items-center h-full gap-6 p-6 m-[100px]">
           <li><a routerLink="/" class="text-gray-800 font-[600] text-[20px] hover:text-gray-600 nav-link">Home</a></li>
-          <li><a routerLink="/Shop-all" class="text-gray-800 font-[600] text-[20px] hover:text-gray-600 nav-link">Products</a></li>
+          <li><a routerLink="/ShopAll" class="text-gray-800 font-[600] text-[20px] hover:text-gray-600 nav-link">Products</a></li>
           <li><a routerLink="/Shop-all" class="text-gray-800 font-[600] text-[20px] hover:text-gray-600 nav-link">Best Sellers</a></li>
-          <li><a routerLink="/Shop-all" class="text-gray-800 font-[600] text-[20px] hover:text-gray-600 nav-link">Collections</a></li>
+          <li><a routerLink="/Shop-all" class="text-gray-800 font-[600] text-[20px] hover:text-gray-600 nav-link">Sale</a></li>
+          <li><a routerLink="/Shop-all" class="text-gray-800 font-[600] text-[20px] hover:text-gray-600 nav-link">Recruitment</a></li>
+
           <li class="border-b-2 border-gray-300">
             <form>
               <input type="text" placeholder="Search" class="p-2 w-[250px] h-[50px] mt-10" />

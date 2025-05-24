@@ -1,21 +1,27 @@
+<app-spinner *ngIf="isLoading"></app-spinner>
+
 <app-header class="sticky top-0 z-50"></app-header>
 
 <div class="max-w-6xl mx-auto my-10 flex flex-row justify-around">
-    <div class="w-[260px]">
+    <div class="w-[300px]">
         <img src="../../../assets/image/shop.jpg" alt="" 
         class="w-full h-full rounded-lg object-cover shadow-2xl">
     </div>
-    <div class="w-[600px]">
-        <h1 class="text-[30px] font-bold mb-2">Introduce about VAMT</h1>
+    <div class="w-[600px] flex flex-col justify-around">
+      <div>
+        <p class="text-[25px] font-[500] mb-2">Introduce about VAMT</p>
         Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quis numquam blanditiis voluptas, 
         ex provident sed porro ipsum illo dolore nesciunt tempora quas accusamus nam optio, autem 
         cumque excepturi? Quo, quia! lorem ipsum dolor sit amet consectetur adipisicing elit.
         Quis numquam blanditiis voluptas, ex provident sed porro ipsum illo dolore nesciunt tempora
         quas accusamus nam optio, autem cumque excepturi? Quo, quia!
-        <h3 class="font-bold text-lg mb-3 mt-[200px]">
-            Enjoy the great cold
-        </h3>
-        <p class="text-gray-500">vamtshop.com</p>
+      </div>
+        <div>
+            <p class="text-[18px] font-[500]">
+                Enjoy the great cold
+            </p>
+            <p class="text-gray-500">vamtshop.com</p>
+        </div>
     </div>
 </div>
 
@@ -23,18 +29,18 @@
     <img src="../../../assets/image/anhbia3.jpg" alt="" class="w-full h-full object-cover ">
 </div>
 
-<h1 class="text-center text-[50px] font-bold mb-10">Products</h1>
-<div class=" max-w-5xl category flex flex-row justify-around  mx-auto ">
-  <div class="text-[18px] font-bold nav-filter">Accessories</div>
-  <div class="text-[18px] font-bold nav-filter">Bags</div>
-  <div class="text-[18px] font-bold nav-filter">Clothing</div>
-  <div class="text-[18px] font-bold nav-filter">Jewelry</div>
+<p class="text-center text-[35px] font-[500] ">New Products</p>
+<div class=" max-w-5xl category flex flex-row justify-around mx-auto my-10">
+  <div class="text-[18px] font-medium nav-filter" (click)="filter('Accessories')">Accessories</div>
+  <div class="text-[18px] font-medium nav-filter" (click)="filter('Bags')">Bags</div>
+  <div class="text-[18px] font-medium nav-filter" (click)="filter('Clothing')">Clothing</div>
+  <div class="text-[18px] font-medium nav-filter" (click)="filter('Jewelry')">Jewelry</div>
 </div>
 
 <div class=" mx-auto mb-[120px]">
     <div class="newProduct text-center mb-[100px]">
         <div class="grid grid-cols-4 gap-10 my-10">
-          <div *ngFor="let product of newProducts" 
+          <div *ngFor="let product of filterProducts" 
                 class="bg-white w-[400px] mx-auto p-4 flex flex-col min-h-[320px]
                 transition duration-300 ease-in-out transform hover:scale-110  cursor-pointer " (click)="goToDetailProduct(product._id)">
               <div>
@@ -50,34 +56,38 @@
         </div>
     </div> 
     
-    <h1 class="text-center text-[50px] font-bold mb-10">Collections</h1>
-    <div class="collection grid grid-cols-2 gap-5 max-w-4xl mx-auto">
-        <div class="collection-item bg-black w-[400px] h-[400px] mx-auto">
-          <img src="../../../assets/image/collection-bg.jpg" alt="" class="w-full h-full object-cover rounded-lg">
-          <div class=" absolute top-0 left-2 w-full flex flex-col items-center justify-center">
-            <h1 class="text-[50px] font-bold text-white">THE ROCK 2025 Collection</h1>
-          </div>
-        </div>
-        <div class="collection-item bg-black w-[400px] h-[400px] mx-auto">
-          <img src="../../../assets/image/collection2.jpg" alt="" class="w-full h-full object-cover rounded-lg">
-          <div class=" absolute top-0 left-2 w-full flex flex-col items-center justify-center">
-            <h1 class="text-[50px] font-bold text-white">THE SPRING 2026 Collection</h1>
-          </div>
-        </div>
-        <div class="collection-item bg-black w-[400px] h-[400px] mx-auto">
-          <img src="../../../assets/image/collection3.jpg" alt="" class="w-full h-full object-cover rounded-lg">
-          <div class=" absolute top-0 left-2 w-full flex flex-col items-center justify-center">
-            <h1 class="text-[50px] font-bold text-white">HYBERNATE 26s Collection</h1>
-          </div>
-        </div>
-        <div class="collection-item bg-black w-[400px] h-[400px] mx-auto">
-          <img src="../../../assets/image/collection4.jpg" alt="" class="w-full h-full object-cover rounded-lg">
-          <div class=" absolute top-0 left-2 w-full flex flex-col items-center justify-center">
-            <h1 class="text-[50px] font-bold text-white">FANTASY 2223 Collection</h1>
-          </div>
-        </div>
+    <p class="text-center text-[35px] font-[500]">Collections</p>
+    <div class="collection grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-6xl mx-auto my-10">
+    <div class="relative group rounded-xl overflow-hidden shadow-lg">
+      <img src="../../../assets/image/collection-bg.jpg" alt="THE ROCK" class="w-full h-[400px] object-cover transform group-hover:scale-105 transition duration-300">
+      <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+        <span class="text-white text-3xl md:text-4xl font-bold text-center">THE ROCK 2025 Collection</span>
+      </div>
     </div>
-</div>
+
+    <div class="relative group rounded-xl overflow-hidden shadow-lg">
+      <img src="../../../assets/image/collection2.jpg" alt="THE SPRING" class="w-full h-[400px] object-cover transform group-hover:scale-105 transition duration-300">
+      <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+        <span class="text-white text-3xl md:text-4xl font-bold text-center">THE SPRING 2026 Collection</span>
+      </div>
+    </div>
+
+    <div class="relative group rounded-xl overflow-hidden shadow-lg">
+      <img src="../../../assets/image/collection3.jpg" alt="HYBERNATE" class="w-full h-[400px] object-cover transform group-hover:scale-105 transition duration-300">
+      <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+        <span class="text-white text-3xl md:text-4xl font-bold text-center">HYBERNATE 26s Collection</span>
+      </div>
+    </div>
+
+    <div class="relative group rounded-xl overflow-hidden shadow-lg">
+      <img src="../../../assets/image/collection4.jpg" alt="FANTASY" class="w-full h-[400px] object-cover transform group-hover:scale-105 transition duration-300">
+      <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+        <span class="text-white text-3xl md:text-4xl font-bold text-center">FANTASY 2223 Collection</span>
+      </div>
+    </div>
+  </div>
+
+  </div>
 
 <div class="subcribe flex flex-col items-center">
     <h1 class="text-center text-[50px] font-bold text-gray-800">Subscribe to join our community</h1>
