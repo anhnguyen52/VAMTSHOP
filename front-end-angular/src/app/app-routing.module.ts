@@ -17,7 +17,7 @@ const routes: Routes = [
   {path: 'Profile', component: ProfileComponent, canActivate: [AuthGuard] },
   {path: 'DetailProduct/:id', component: DetailProductComponent },
   {path: 'Cart', component: CartComponent },
-  {path: 'ShopAll', component: ShopAllComponent}
+  {path: 'ShopAll', component: ShopAllComponent},
 ];
 
 @NgModule({
