@@ -1,0 +1,36 @@
+.span{
+    position: relative;
+    display: inline-block;
+    transition: color 0.3s ease;
+}
+
+.span::after{
+    content: "";
+    position: absolute;
+    background-color: black;
+    bottom: -2px;
+    left: 50%;
+    width: 0%;
+    height: 2px;
+    transition: all 0.1s ease-in-out;
+    transform:  translateX(-50%);
+}
+
+.span:hover::after{
+    width: 100%;
+}
+
+.span:hover{
+    transition: all 0.1s ease-in-out;
+    transform: scale(1.1);
+    font-weight: bold;
+}
+
+.sort{
+    z-index: 99;
+}
+
+.btn-style {
+  @apply w-[100px] h-[40px] text-[14px] font-[500] bg-gray-800 text-white rounded-lg
+          hover:bg-white hover:text-black hover:border-gray-950 hover:border-[4px] hover:scale-105 transition duration-100;
+}

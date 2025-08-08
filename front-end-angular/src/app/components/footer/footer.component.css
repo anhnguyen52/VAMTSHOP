@@ -1,0 +1,26 @@
+table {
+    width: 100%;
+    text-align: left;
+    margin-top: 70px;
+  }
+  th, td {
+    padding: 10px;
+    vertical-align: top;
+  }
+  th {
+    font-weight: bold;
+  }
+  td a {
+    color: gray;
+    text-decoration: none;
+  }
+  td a:hover {
+    text-decoration: underline;
+  }
+
+  .footer-bottom {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 14px;
+    color: gray;
+  }
