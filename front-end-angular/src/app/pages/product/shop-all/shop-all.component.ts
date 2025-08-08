@@ -74,6 +74,7 @@ export class ShopAllComponent implements OnInit {
     this.productService.getAllProduct().subscribe(
       (data) => {
         this.Products = data;
+        // console.log("Tất cả sản phẩm: ", this.Products);
         this.filteredProducts = this.Products; 
         this.visibleProducts = this.filteredProducts.slice(0, this.itemsToShow);
       },
@@ -107,9 +108,11 @@ export class ShopAllComponent implements OnInit {
     this.visibleProducts = this.filteredProducts.slice(0, this.itemsToShow); // Cập nhật danh sách sản phẩm hiển thị
   }
 
-  goToDetailProduct(productId: string) {
+  goToDetailProduct(productId: any) {
+    console.log('productId:', productId);
     this.router.navigate([`/DetailProduct/${productId}`]);
   }
+
 
   @HostListener('window:scroll', [])
   onWindowScroll() {

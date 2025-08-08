@@ -22,6 +22,14 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 
 import {MatTreeModule} from '@angular/material/tree';
 import {MatExpansionModule} from '@angular/material/expansion';
+import { DashboardComponent } from './pages/admin/dashboard/dashboard.component';
+import { NavigationComponent } from './components/navigation/navigation.component';
+import { AdminLayoutComponent } from './pages/admin/admin-layout/admin-layout.component';
+import { ProductManagementComponent } from './pages/admin/product-management/product-management.component';
+import { UserManagementComponent } from './pages/admin/user-management/user-management.component';
+import { OrderManagementComponent } from './pages/admin/order-management/order-management.component';
+import { DiscountManagementComponent } from './pages/admin/discount-management/discount-management.component';
+import { SaleCampaignManagementComponent } from './pages/admin/sale-campaign-management/sale-campaign-management.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -36,6 +44,14 @@ import {MatExpansionModule} from '@angular/material/expansion';
     SpinnerComponent,
     CartComponent,
     ToastComponent,
+    DashboardComponent,
+    NavigationComponent,
+    AdminLayoutComponent,
+    ProductManagementComponent,
+    UserManagementComponent,
+    OrderManagementComponent,
+    DiscountManagementComponent,
+    SaleCampaignManagementComponent,
   ],
   imports: [
     BrowserModule,

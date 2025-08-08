@@ -18,7 +18,7 @@ export class DetailProductComponent implements OnInit {
   faArrowRight = faArrowRight;
   faArrowLeft = faArrowLeft;
   currentIndex = 0;
-  slideWidth = 500; // Chiều rộng mỗi ảnh
+  slideWidth = 500; 
   isLoading = false;
   cartItems: any[] = [];
   newProducts: any[] = [];
@@ -126,6 +126,10 @@ export class DetailProductComponent implements OnInit {
 
   goToDetailProduct(productId:string){
     this.router.navigate([`/DetailProduct/${productId}`]);
+  }
+
+  formatCurrency(value: number): string {
+    return new Intl.NumberFormat('vi-VN').format(value);
   }
 
 }
