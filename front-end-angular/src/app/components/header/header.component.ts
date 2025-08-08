@@ -53,7 +53,7 @@ export class HeaderComponent implements OnInit {
       this.isLogin = false;
     }
   
-    console.log("User: ", this.user);
+    // console.log("User: ", this.user);
   
     if (typeof document !== 'undefined' && this.menuOpen === false) {
       document.body.style.overflow = 'auto';

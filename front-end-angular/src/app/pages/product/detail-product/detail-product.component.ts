@@ -3,6 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../../service/product.service';
 import { get } from 'http';
 import { faArrowRight, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { CartService } from '../../../service/cart.service';
+import { ToastService } from '../../../service/toast.service';
 @Component({
   selector: 'app-detail-product',
   templateUrl: './detail-product.component.html',
@@ -16,16 +18,18 @@ export class DetailProductComponent implements OnInit {
   faArrowRight = faArrowRight;
   faArrowLeft = faArrowLeft;
   currentIndex = 0;
-  slideWidth = 500; // Chiều rộng mỗi ảnh
+  slideWidth = 500; 
   isLoading = false;
-
+  cartItems: any[] = [];
   newProducts: any[] = [];
+  
 
   constructor(
     private router: Router,
     private productService: ProductService,
     private route: ActivatedRoute,
-    
+    private cartService: CartService,
+    private toastService: ToastService
   ) { }
 
   ngOnInit(): void {
@@ -84,8 +88,48 @@ export class DetailProductComponent implements OnInit {
     )
   }
 
+  addProductToCart(productId: string) {
+    const user = localStorage.getItem('user');
+  
+    if (user) {
+      const userId = JSON.parse(user)._id;
+      this.cartService.addToCart(userId, productId, 1).subscribe(
+        (data) => {
+          console.log("Thêm sản phẩm vào giỏ hàng thành công: ", data);
+          this.toastService.show('Đã thêm vào giỏ hàng!');
+        },
+        (error) => {
+          console.error("Lỗi khi thêm sản phẩm vào giỏ hàng: ", error);
+          alert("Lỗi khi thêm sản phẩm vào giỏ hàng. Vui lòng thử lại sau.");
+        }
+      );
+    } else {
+      // Lấy lại cartItems từ localStorage để đảm bảo đồng bộ
+      const cartItemsString = localStorage.getItem('cartItems');
+      this.cartItems = cartItemsString ? JSON.parse(cartItemsString) : [];
+  
+      const index = this.cartItems.findIndex(item => item.product_id === productId);
+  
+      if (index !== -1) {
+        this.cartItems[index].quantity += 1;
+        console.log("Cập nhật số lượng sản phẩm trong giỏ hàng: ", this.cartItems);
+      } else {
+        this.cartItems.push({ product_id: productId, quantity: 1 });
+        console.log("Thêm sản phẩm mới vào giỏ hàng: ", this.cartItems);
+      }
+  
+      localStorage.setItem('cartItems', JSON.stringify(this.cartItems));
+      this.toastService.show('Đã thêm vào giỏ hàng!');
+    }
+  }
+  
+
   goToDetailProduct(productId:string){
     this.router.navigate([`/DetailProduct/${productId}`]);
+  }
+
+  formatCurrency(value: number): string {
+    return new Intl.NumberFormat('vi-VN').format(value);
   }
 
 }

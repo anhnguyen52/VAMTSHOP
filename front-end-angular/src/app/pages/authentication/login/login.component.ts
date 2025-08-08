@@ -43,7 +43,11 @@ export class LoginComponent implements OnInit {
             (userData) => {
               localStorage.setItem('user', JSON.stringify(userData.data));
               // console.log("Thông tin người dùng: ",userData.data);
-              this.router.navigate(['/'])
+              if(userData.data.role === 'ADMIN'){
+                this.router.navigate(['/AdminLayout/Dashboard']);
+              }else if(userData.data.role === 'USER'){
+                this.router.navigate(['/'])
+              }
             },
             (error) => {
               console.error("Lỗi khi lấy thông tin người dùng: ", error);
