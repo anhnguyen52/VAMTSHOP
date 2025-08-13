@@ -1,6 +1,20 @@
-<div class="flex min-h-screen">
+<div class="flex h-screen">
   <app-navigation></app-navigation>
-  <main class="flex-1 bg-gray-100 p-6">
-    <router-outlet></router-outlet>
+  <main class="flex-1 flex flex-col bg-gray-100">
+    <div class="p-4 border-b border-gray-300 flex items-center">
+      <div>
+        <p class="font-bold">Admin Panel</p>
+        <span class="text-gray-400">Manage your application settings</span>
+      </div>
+      <div class="ml-auto">
+        <button class="bg-white font-bold px-4 py-2 rounded-lg border-[2px] border-gray-400">
+          Switch User
+        </button>
+      </div>
+    </div>
+
+    <div class="flex-1 overflow-y-auto p-4">
+      <router-outlet></router-outlet>
+    </div>
   </main>
 </div>

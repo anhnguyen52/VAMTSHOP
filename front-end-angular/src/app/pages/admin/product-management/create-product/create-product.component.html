@@ -1,0 +1,97 @@
+<div class="max-w-7xl mx-auto p-6 bg-white rounded-lg shadow">
+  <h2 class="text-xl font-bold mb-6">Tạo sản phẩm mới</h2>
+
+  <form (ngSubmit)="submitForm()" class="space-y-4">
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <input class="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none"
+          placeholder="Tên sản phẩm" [(ngModel)]="product_name" name="product_name">
+        <small class="text-gray-500">Nhập tên đầy đủ của sản phẩm</small>
+      </div>
+      <div>
+        <input class="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none"
+          type="number" placeholder="Giá" [(ngModel)]="price" name="price">
+        <small class="text-gray-500">Giá bán sản phẩm (VNĐ)</small>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <select class="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none"
+          [(ngModel)]="category_id" name="category_id">
+          <option value="">-- Chọn danh mục --</option>
+          <option *ngFor="let c of categories" [value]="c._id">{{ c.category_name }}</option>
+        </select>
+        <small class="text-gray-500">Chọn danh mục sản phẩm</small>
+      </div>
+      <div>
+        <select class="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none"
+          [(ngModel)]="collection_id" name="collection_id">
+          <option value="">-- Chọn bộ sưu tập --</option>
+          <option *ngFor="let col of collections" [value]="col._id">{{ col.collection_name }}</option>
+        </select>
+        <small class="text-gray-500">Chọn bộ sưu tập</small>
+      </div>
+    </div>
+
+    <div>
+      <textarea class="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none h-[200px]"
+        placeholder="Mô tả" [(ngModel)]="description" name="description"></textarea>
+      <small class="text-gray-500">Mô tả chi tiết về sản phẩm</small>
+    </div>
+
+    <div>
+      <h3 class="font-semibold mb-2">Sizes</h3>
+      <div class="flex gap-2 mb-2 items-center" *ngFor="let s of sizes; let i = index">
+        <select class="border border-gray-300 px-2 py-1 rounded"
+          [(ngModel)]="sizes[i].size" name="size{{i}}">
+          <option *ngFor="let option of availableSizes" [value]="option">{{ option }}</option>
+        </select>
+        <input class="border border-gray-300 px-2 py-1 rounded" type="number" placeholder="Số lượng"
+          [(ngModel)]="sizes[i].quantity" name="quantity{{i}}" (input)="updateStock()">
+        <button type="button" (click)="removeSize(i)"
+          class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded">X</button>
+      </div>
+      <button type="button" (click)="addSize()" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">+ Thêm size</button>
+    </div>
+
+    <div>
+      <input class="w-full border border-gray-300 px-3 py-2 rounded bg-gray-100"
+        type="number" [(ngModel)]="stock" name="stock" readonly>
+      <small class="text-gray-500">Tổng tồn kho (tự động tính)</small>
+    </div>
+
+    <div>
+      <input type="file" multiple (change)="onFileChange($event)"
+        class="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none">
+      <small class="text-gray-500">Chọn nhiều ảnh sản phẩm từ máy tính</small>
+
+      <div class="flex flex-wrap gap-4 mt-4">
+        <div *ngFor="let img of imagePreviews; let i = index" class="relative w-32 h-32">
+          <img [src]="img" class="w-full h-full object-cover rounded border">
+          <button type="button" (click)="removeImage(i)"
+            class="absolute top-1 right-1 bg-red-500 text-white rounded-full px-2 py-0.5 text-sm">×</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h3 class="font-semibold mb-2">Tags</h3>
+      <input #tagInput class="border border-gray-300 px-2 py-1 rounded focus:outline-none"
+        placeholder="Nhập tag và Enter" (keyup.enter)="addTag(tagInput.value); tagInput.value=''">
+      <div class="flex flex-wrap gap-2 mt-2">
+        <span *ngFor="let tag of tags" class="bg-gray-200 px-2 py-1 rounded cursor-pointer hover:bg-gray-300"
+          (click)="removeTag(tag)">
+          {{ tag }} ×
+        </span>
+      </div>
+    </div>
+
+    <div class="flex gap-4">
+      <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Tạo sản phẩm</button>
+      <button type="button" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded" (click)="cancel()">Hủy</button>
+    </div>
+
+  </form>
+</div>

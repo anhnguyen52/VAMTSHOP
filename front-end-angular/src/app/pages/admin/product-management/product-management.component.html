@@ -1,1 +1,56 @@
-<p>product-management works!</p>
+<div class="max-w-7xl mx-auto p-6 bg-white rounded-lg shadow h-full">
+  <h2 class="text-xl font-bold mb-6">Quản lý sản phẩm</h2>
+
+  <div class="flex items-center mb-6">
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      (input)="filterProducts()"
+      placeholder="Tìm kiếm theo SKU hoặc tên sản phẩm..."
+      class="border border-gray-300 rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+  </div>
+
+  <div class="flex-1 overflow-y-auto overflow-x-auto">
+    <table class="min-w-full text-center border border-gray-200 rounded-lg">
+      <thead>
+        <tr class="bg-gray-100 text-gray-700">
+          <th class="px-4 py-2 border">STT</th>
+          <th class="px-4 py-2 border">Ảnh</th>
+          <th class="px-4 py-2 border">Tên</th>
+          <th class="px-4 py-2 border">Giá</th>
+          <th class="px-4 py-2 border">Tồn kho</th>
+          <th class="px-4 py-2 border">Trạng thái</th>
+          <th class="px-4 py-2 border">Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of filteredProducts; let i = index" class="hover:bg-gray-50">
+          <td class="px-4 py-2 border">{{ i + 1 }}</td>
+          <td class="px-4 py-2 border flex items-center justify-center">
+            <img [src]="product.image_urls[0].url" alt="{{ product.product_name }}" class="w-24 h-24 object-contain rounded" />
+          </td>
+          <td class="px-4 py-2 border">{{ product.product_name }}</td>
+          <td class="px-4 py-2 border">{{ product.price | currency:'VND' }}</td>
+          <td class="px-4 py-2 border">{{ product.stock }}</td>
+          <td class="px-4 py-2 border">
+            <span
+              [ngClass]="{
+                'bg-green-100 text-green-700 px-2 py-1 rounded': product.status === 'available',
+                'bg-yellow-100 text-yellow-700 px-2 py-1 rounded': product.status === 'out_of_stock',
+                'bg-red-100 text-red-700 px-2 py-1 rounded': product.status === 'disabled'
+              }"
+            >
+              {{ product.status }}
+            </span>
+          </td>
+          <td class="px-4 py-2 border space-x-2">
+            <button class="text-[18px]">
+              <fa-icon [icon]="faPenToSquare"></fa-icon>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
