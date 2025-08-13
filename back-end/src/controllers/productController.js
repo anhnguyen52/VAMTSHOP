@@ -42,7 +42,7 @@ const getProductById = async (req, res) => {
 
 const createProduct = async (req, res) => {
   try {
-    const {
+    let {
       product_name,
       category_id,
       collection_id,
@@ -53,14 +53,30 @@ const createProduct = async (req, res) => {
       tags
     } = req.body;
 
-    if (!product_name || !category_id || !collection_id || !price || !stock || !description ) {
+    if (!product_name || !category_id || !collection_id || !price || !stock || !description) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    // Map các ảnh thành object { url, public_id }
+    if (typeof sizes === 'string') {
+      try {
+        sizes = JSON.parse(sizes);
+      } catch (err) {
+        return res.status(400).json({ message: "Invalid sizes format" });
+      }
+    }
+
+    if (typeof tags === 'string') {
+      try {
+        tags = JSON.parse(tags);
+      } catch (err) {
+        return res.status(400).json({ message: "Invalid tags format" });
+      }
+    }
+
+    // Map ảnh thành object { url, public_id }
     const image_urls = req.files.map(file => ({
-      url: file.path,           // Cloudinary URL
-      public_id: file.filename  // Cloudinary public_id
+      url: file.path,           // Cloudinary URL hoặc local path
+      public_id: file.filename  // public_id từ Cloudinary hoặc tên file
     }));
 
     const newProduct = await Product.create({
@@ -80,6 +96,7 @@ const createProduct = async (req, res) => {
     return res.status(500).json({ message: err.message });
   }
 };
+
 
 
 const updateProduct = async (req, res) => {

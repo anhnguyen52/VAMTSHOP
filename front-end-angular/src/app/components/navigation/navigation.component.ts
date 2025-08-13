@@ -16,8 +16,8 @@ export class NavigationComponent {
       open: true,
       children: [
         { label: 'Danh sách', link: '/AdminLayout/Product-management' },
-        { label: 'Tạo mới', link: '/AdminLayout/product-create' },
-        { label: 'Danh mục', link: '/AdminLayout/category' }
+        { label: 'Tạo mới', link: '/AdminLayout/Product-create' },
+        { label: 'Danh mục / Bộ sưu tập', link: '/AdminLayout/category' }
       ]
     },
     {
