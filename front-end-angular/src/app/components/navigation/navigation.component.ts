@@ -12,20 +12,28 @@ export class NavigationComponent {
       link: '/AdminLayout/Dashboard',
     },
     {
+      label: 'Người dùng và quyền hạn',
+      open: false,
+      children: [
+        { label: 'Quản lý người dùng', link: '/AdminLayout/user-management' },
+        { label: 'Khiếu nại', link: '/AdminLayout/role-management' }
+      ]
+    },
+    {
       label: 'Sản phẩm',
       open: true,
       children: [
         { label: 'Danh sách', link: '/AdminLayout/Product-management' },
         { label: 'Tạo mới', link: '/AdminLayout/Product-create' },
-        { label: 'Danh mục / Bộ sưu tập', link: '/AdminLayout/category' }
+        { label: 'Danh mục / Bộ sưu tập', link: '/AdminLayout/Category-collection-management' },
+        { label: 'Rating', link: '/AdminLayout/Product-detail' }
       ]
     },
     {
-      label: 'Trang',
+      label: 'Đơn hàng',
       open: false,
       children: [
-        { label: 'Danh sách', link: '/AdminLayout/page-list' },
-        { label: 'Page Builder', link: '/AdminLayout/page-builder' }
+        { label: 'Quản lý đơn hàng', link: '/AdminLayout/page-list' },
       ]
     },
     {

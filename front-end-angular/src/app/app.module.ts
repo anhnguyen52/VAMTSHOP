@@ -19,7 +19,7 @@ import { SpinnerComponent } from './components/spinner/spinner.component';
 import { CartComponent } from './pages/product/cart/cart.component';
 import { ToastComponent } from './components/toast/toast.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-
+import { NgxPaginationModule } from 'ngx-pagination';
 import {MatTreeModule} from '@angular/material/tree';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { DashboardComponent } from './pages/admin/dashboard/dashboard.component';
@@ -31,6 +31,7 @@ import { OrderManagementComponent } from './pages/admin/order-management/order-m
 import { DiscountManagementComponent } from './pages/admin/discount-management/discount-management.component';
 import { SaleCampaignManagementComponent } from './pages/admin/sale-campaign-management/sale-campaign-management.component';
 import { CreateProductComponent } from './pages/admin/product-management/create-product/create-product.component';
+import { CategoryCollectionManagementComponent } from './pages/admin/category-collection-management/category-collection-management.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -54,6 +55,7 @@ import { CreateProductComponent } from './pages/admin/product-management/create-
     DiscountManagementComponent,
     SaleCampaignManagementComponent,
     CreateProductComponent,
+    CategoryCollectionManagementComponent,
   ],
   imports: [
     BrowserModule,
@@ -63,7 +65,8 @@ import { CreateProductComponent } from './pages/admin/product-management/create-
     ReactiveFormsModule,
     HttpClientModule,
     MatTreeModule,
-    MatExpansionModule
+    MatExpansionModule,
+    NgxPaginationModule
   ],
   providers: [
     provideClientHydration(),

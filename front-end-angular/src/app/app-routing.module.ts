@@ -14,6 +14,7 @@ import { DashboardComponent } from './pages/admin/dashboard/dashboard.component'
 import { ProductManagementComponent } from './pages/admin/product-management/product-management.component';
 import { AdminLayoutComponent } from './pages/admin/admin-layout/admin-layout.component';
 import { CreateProductComponent } from './pages/admin/product-management/create-product/create-product.component';
+import { CategoryCollectionManagementComponent } from './pages/admin/category-collection-management/category-collection-management.component';
 const routes: Routes = [
   {path: '', component: HomeComponent },
   {path: 'Login', component: LoginComponent},
@@ -29,7 +30,7 @@ const routes: Routes = [
       { path: 'Dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
       { path: 'Product-management', component: ProductManagementComponent, canActivate: [AuthGuard] },
       { path: 'Product-create', component: CreateProductComponent, canActivate: [AuthGuard] },
-
+      { path: 'Category-collection-management', component: CategoryCollectionManagementComponent, canActivate: [AuthGuard] },
     ]
   }
 
