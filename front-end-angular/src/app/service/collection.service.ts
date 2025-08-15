@@ -22,14 +22,14 @@ export class CollectionService {
   }
 
   createCollection(data: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, data);
+    return this.http.post<any>(`${this.apiUrl}/create`, data);
   }
 
   updateCollection(id: string, data: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, data);
+    return this.http.put<any>(`${this.apiUrl}/update/${id}`, data);
   }
 
   deleteCollection(id: string): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/${id}`);
+    return this.http.delete<any>(`${this.apiUrl}/delete/${id}`);
   }
 }

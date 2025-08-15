@@ -22,14 +22,14 @@ export class CategoryService {
   }
 
   createCategory(data: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, data);
+    return this.http.post<any>(`${this.apiUrl}/create`, data);
   }
 
   updateCategory(id: string, data: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, data);
+    return this.http.put<any>(`${this.apiUrl}/update/${id}`, data);
   }
 
   deleteCategory(id: string): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/${id}`);
+    return this.http.delete<any>(`${this.apiUrl}/delete/${id}`);
   }
 }
