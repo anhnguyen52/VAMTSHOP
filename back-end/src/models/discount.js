@@ -1,17 +1,44 @@
 const mongoose = require('mongoose');
 
 const discountSchema = new mongoose.Schema(
-    {
-        discount_name: { type: String, required: true },
-        discount_percentage: { type: Number, required: true },
-        valid_from: { type: Date, required: true },
-        valid_until: { type: Date, required: true },
-        conditions: { type: String, required: true },
-    }, 
-    {
-        timestamps: true,
-        collection: 'Discounts'
-    }
-)
+  {
+    code: {
+      type: String,
+      required: true,
+      unique: true,
+      match: [/^[A-Z0-9]{6}$/, "Mã giảm giá phải có đúng 6 ký tự, chỉ gồm chữ in hoa và số"],
+    },
+    type: {
+      type: String,
+      required: true,
+      enum: ["fixed", "percentage"],
+    },
+    value: {
+      type: Number,
+      required: true,
+      validate: {
+        validator(v) {
+          return this.type === "percentage"
+            ? Number.isInteger(v) && v > 0 && v <= 100
+            : v > 0;
+        },
+        message: (props) => `Giá trị giảm giá không hợp lệ: ${props.value}`,
+      },
+    },
+    usageLimit: { type: Number, required: true, min: 1 },
+    usedCount: { type: Number, default: 0 },
+    startDate: { type: Date, required: true },
+    endDate: { type: Date, required: true },
+    isActive: { type: Boolean, default: true },
 
-module.exports = mongoose.model('Discount', discountSchema);
+    conditions: {
+      minPurchase: { type: Number, default: 0 },   
+      minOrders: { type: Number, default: 0 },      
+      minItemsInCart: { type: Number, default: 0 }, 
+    },
+  },
+  { timestamps: true }
+);
+
+
+module.exports = mongoose.model('Discount', discountSchema, 'Discounts');
