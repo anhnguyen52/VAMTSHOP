@@ -16,6 +16,8 @@ import { AdminLayoutComponent } from './pages/admin/admin-layout/admin-layout.co
 import { CreateProductComponent } from './pages/admin/product-management/create-product/create-product.component';
 import { CategoryCollectionManagementComponent } from './pages/admin/category-collection-management/category-collection-management.component';
 import { UserManagementComponent } from './pages/admin/user-management/user-management.component';
+import { DiscountManagementComponent } from './pages/admin/discount-management/discount-management.component';
+import { SaleCampaignManagementComponent } from './pages/admin/sale-campaign-management/sale-campaign-management.component';
 const routes: Routes = [
   {path: '', component: HomeComponent },
   {path: 'Login', component: LoginComponent},
@@ -34,6 +36,9 @@ const routes: Routes = [
       { path: 'Product-management', component: ProductManagementComponent, canActivate: [AuthGuard] },
       { path: 'Product-create', component: CreateProductComponent, canActivate: [AuthGuard] },
       { path: 'Category-collection-management', component: CategoryCollectionManagementComponent, canActivate: [AuthGuard] },
+
+      {path: 'Discount-management', component: DiscountManagementComponent, canActivate: [AuthGuard]},
+      {path: 'Sale-campaign-management', component: SaleCampaignManagementComponent, canActivate: [AuthGuard]},
     ]
   }
 

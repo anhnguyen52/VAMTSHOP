@@ -13,7 +13,7 @@ export class NavigationComponent {
     },
     {
       label: 'Người dùng và quyền hạn',
-      open: false,
+      open: true,
       children: [
         { label: 'Quản lý người dùng', link: '/AdminLayout/User-management' },
         { label: 'Khiếu nại', link: '/AdminLayout/role-management' }
@@ -31,17 +31,17 @@ export class NavigationComponent {
     },
     {
       label: 'Đơn hàng',
-      open: false,
+      open: true,
       children: [
         { label: 'Quản lý đơn hàng', link: '/AdminLayout/page-list' },
       ]
     },
     {
       label: 'Khuyến mãi',
-      open: false,
+      open: true,
       children: [
-        { label: 'Mã giảm giá', link: '/AdminLayout/discount' },
-        { label: 'Chương trình khuyến mãi', link: '/AdminLayout/promotion' }
+        { label: 'Mã giảm giá', link: '/AdminLayout/Discount-management' },
+        { label: 'Chương trình khuyến mãi', link: '/AdminLayout/Sale-campaign-management' }
       ]
     }
   ];
