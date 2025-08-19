@@ -1,1 +1,185 @@
-<p>user-management works!</p>
+<div class="max-w-7xl mx-auto p-6 bg-white rounded-lg shadow min-h-full">
+  <h2 class="text-xl font-bold mb-6">Quản lý User</h2>
+
+  <div class="flex items-center gap-4 mb-6">
+    <div class="relative w-full">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (input)="onSearchChange()"
+        placeholder="Tìm kiếm theo tên, email hoặc số điện thoại..."
+        class="border border-gray-300 rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+      <button 
+        *ngIf="searchTerm" 
+        (click)="clearSearch()"
+        class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700">
+        ×
+      </button>
+    </div>
+
+    <select
+      [(ngModel)]="statusFilter"
+      (change)="onStatusFilterChange()"
+      class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+    >
+      <option value="all">Tất cả</option>
+      <option value="active">Đang hoạt động</option>
+      <option value="inactive">Ngừng hoạt động</option>
+      <option value="newest">Mới nhất</option>
+    </select>
+  </div>
+
+  <div class="mb-4 text-gray-600">
+    Tổng số User: <span class="font-semibold">{{ filteredUsers.length }}</span> / {{ users.length }}
+    | Tổng số Admin: <span class="font-semibold">{{ filteredAdmins.length }}</span> / {{ admins.length }}
+  </div>
+
+  <div class="mb-4 text-sm text-gray-500" *ngIf="searchTerm">
+    Đang tìm kiếm: "{{ searchTerm }}"
+  </div>
+
+  <div class="overflow-x-auto mb-12">
+    <h3 class="text-lg font-semibold mb-2">Danh sách User</h3>
+    <table class="min-w-full text-center border border-gray-200 rounded-lg">
+      <thead>
+        <tr class="bg-gray-100 text-gray-700">
+          <th class="px-4 py-2 border">STT</th>
+          <th class="px-4 py-2 border">Tên</th>
+          <th class="px-4 py-2 border">Email</th>
+          <th class="px-4 py-2 border">Số điện thoại</th>
+          <th class="px-4 py-2 border">Trạng thái</th>
+          <th class="px-4 py-2 border">Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="filteredUsers.length === 0" class="text-center text-gray-500">
+          <td colspan="6" class="px-4 py-8">
+            <div *ngIf="searchTerm">Không tìm thấy user nào với từ khóa "{{ searchTerm }}"</div>
+            <div *ngIf="!searchTerm">Không có user nào</div>
+          </td>
+        </tr>
+        <ng-container *ngFor="let user of filteredUsers | paginate: { id: 'user', itemsPerPage: 10, currentPage: userPage }; let i = index">
+          <tr class="hover:bg-gray-50">
+            <td class="px-4 py-2 border">{{ i + 1 + (userPage - 1) * 10 }}</td>
+            <td class="px-4 py-2 border">{{ user.first_name }} {{ user.last_name }}</td>
+            <td class="px-4 py-2 border">{{ user.email }}</td>
+            <td class="px-4 py-2 border">{{ user.phone }}</td>
+            <td class="px-4 py-2 border">
+              <span
+                class="px-2 py-1 rounded"
+                [ngClass]="{
+                  'bg-green-100 text-green-700': user.is_active,
+                  'bg-red-100 text-red-700': !user.is_active
+                }"
+              >
+                <span *ngIf="user.is_active">Active</span>
+                <span *ngIf="!user.is_active">Inactive</span>
+              </span>
+            </td>
+            <td class="px-4 py-2 border">
+              <button (click)="editUser(user)" class="text-[18px]">
+                <fa-icon [icon]="faPenToSquare"></fa-icon>
+              </button>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+    <pagination-controls 
+      id="user" 
+      (pageChange)="userPage = $event" 
+      class="mt-4 flex justify-center">
+    </pagination-controls>
+  </div>
+
+  <div class="overflow-x-auto">
+    <h3 class="text-lg font-semibold mb-2">Danh sách Admin</h3>
+    <table class="min-w-full text-center border border-gray-200 rounded-lg">
+      <thead>
+        <tr class="bg-gray-100 text-gray-700">
+          <th class="px-4 py-2 border">STT</th>
+          <th class="px-4 py-2 border">Tên</th>
+          <th class="px-4 py-2 border">Email</th>
+          <th class="px-4 py-2 border">Trạng thái</th>
+          <th class="px-4 py-2 border">Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="filteredAdmins.length === 0" class="text-center text-gray-500">
+          <td colspan="5" class="px-4 py-8">
+            <div *ngIf="searchTerm">Không tìm thấy admin nào với từ khóa "{{ searchTerm }}"</div>
+            <div *ngIf="!searchTerm">Không có admin nào</div>
+          </td>
+        </tr>
+        <ng-container *ngFor="let admin of filteredAdmins | paginate: { id: 'admin', itemsPerPage: 5, currentPage: adminPage }; let i = index">
+          <tr class="hover:bg-gray-50">
+            <td class="px-4 py-2 border">{{ i + 1 + (adminPage - 1) * 5 }}</td>
+            <td class="px-4 py-2 border">{{ admin.first_name }} {{ admin.last_name }}</td>
+            <td class="px-4 py-2 border">{{ admin.email }}</td>
+            <td class="px-4 py-2 border">
+              <label class="switch">
+                <input type="checkbox"
+                       [checked]="admin.is_active"
+                       disabled />
+                <span class="slider round"></span>
+              </label>
+            </td>
+            <td class="px-4 py-2 border">
+              <button (click)="editUser(admin)" class="text-[18px]">
+                <fa-icon [icon]="faPenToSquare"></fa-icon>
+              </button>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+    <pagination-controls 
+      id="admin" 
+      (pageChange)="adminPage = $event" 
+      class="mt-4 flex justify-center">
+    </pagination-controls>
+  </div>
+</div>
+
+<div *ngIf="selectedUser"
+     class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+     (click)="closeModal()"> 
+
+  <div class="bg-white rounded-lg p-6 shadow-lg w-96 relative"
+       (click)="$event.stopPropagation()"> 
+       
+    <button (click)="closeModal()" 
+            class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-xl font-bold">
+      ×
+    </button>
+
+    <h3 class="text-lg font-bold mb-4">Cập nhật tài khoản</h3>
+    <p class="mb-4">Người dùng: {{ selectedUser.first_name }} {{ selectedUser.last_name }}</p>
+
+    <div class="mb-4">
+        <small class="text-gray-500 mb-1">Tạm thời ngừng hoạt động tài khoản bằng cách bấm vào </small><br />
+        <div class="flex items-center justify-items-start">
+            <label class="switch">
+            <input type="checkbox"
+                    [checked]="selectedUser.is_active"
+                    (change)="toggleStatus(selectedUser)" />
+                <span class="slider round"></span>
+            </label>
+            <span class="ml-2 text-sm">
+                {{ selectedUser.is_active ? 'Active' : 'Inactive' }}
+            </span>
+        </div>
+    </div>
+
+    <div class="mt-4">
+      <small class="text-gray-500">Chỉ có thể xóa tài khoản khi đã Inactive</small><br />
+      <button (click)="deleteUser(selectedUser)" 
+              class="bg-red-600 text-white px-2 py-1 rounded mt-2">
+        Xóa tài khoản
+      </button>
+    </div>
+
+  </div>
+</div>
+
