@@ -29,13 +29,13 @@
               (click)="openCategoryModal(cat)"
               class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
             >
-              Sửa
+              <fa-icon [icon]="faPenToSquare"></fa-icon>
             </button>
             <button
               (click)="deleteCategory(cat._id)"
               class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
             >
-              Xóa
+              <fa-icon [icon]="faTrash"></fa-icon>
             </button>
           </td>
         </tr>
@@ -78,13 +78,13 @@
               (click)="openCollectionModal(col)"
               class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
             >
-              Sửa
+              <fa-icon [icon]="faPenToSquare"></fa-icon>
             </button>
             <button
               (click)="deleteCollection(col._id)"
               class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
             >
-              Xóa
+              <fa-icon [icon]="faTrash"></fa-icon>
             </button>
           </td>
         </tr>

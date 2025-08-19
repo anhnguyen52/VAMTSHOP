@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CategoryService } from '../../../service/category.service';
 import { CollectionService } from '../../../service/collection.service';
 import { ToastService } from '../../../service/toast.service';
+import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-category-collection-management',
@@ -29,7 +30,8 @@ export class CategoryCollectionManagementComponent implements OnInit {
   showCollectionModal = false;
   editingCollection: any = null;
   collectionForm = { name: '', description: '' };
-
+  faPenToSquare = faPenToSquare;
+  faTrash = faTrash;
   categoryPage = 1;
   collectionPage = 1;
 
