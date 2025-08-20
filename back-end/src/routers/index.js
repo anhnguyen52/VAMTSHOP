@@ -7,6 +7,7 @@ const userRouter = require("./userRouter");
 const orderRouter = require("./orderRouter");
 const AuthRouter = require("./AuthRouter");
 const cartRouter = require("./cartRouter");
+const saleCampaignRouter = require("./saleCampaignRouter");
 
 const router = express.Router();
 
@@ -18,6 +19,7 @@ router.use("/user", userRouter);
 router.use("/order", orderRouter);
 router.use("/auth", AuthRouter);
 router.use("/cart", cartRouter);
+router.use("/saleCampaign", saleCampaignRouter);
 
 module.exports = router;
 
