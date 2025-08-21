@@ -7,6 +7,7 @@ const bodyParser = require("body-parser");
 const path = require("path"); 
 const fs = require("fs");
 const cookieParser = require('cookie-parser')
+const cron = require("node-cron");
 
 dotenv.config();
 
@@ -61,4 +62,9 @@ app.use("/api", router);
 
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on http://localhost:${PORT}`);
+
+  cron.schedule("0 0 * * *", () => {
+    console.log("[CRON] Checking and deactivating expired campaigns...");
+    autoDeactivateExpiredCampaigns();
+  });
 });
