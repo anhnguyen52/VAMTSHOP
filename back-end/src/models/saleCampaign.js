@@ -7,6 +7,12 @@ const saleCampaignSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    image_urls: [
+      {
+        url: String,
+        public_id: String
+      }
+    ],
     description: String,
     products: [
       {
@@ -14,6 +20,7 @@ const saleCampaignSchema = new mongoose.Schema(
         ref: "Product",
       },
     ],
+    
     percentage: {
       type: Number,
       min: 0,

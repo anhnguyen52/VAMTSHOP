@@ -6,9 +6,15 @@ exports.createCampaign = async (req, res) => {
     const { name, description, products, percentage, startDate, endDate } =
       req.body;
 
+    const image_urls = req.files.map(file => ({
+      url: file.path,           // Cloudinary URL hoặc local path
+      public_id: file.filename  // public_id từ Cloudinary hoặc tên file
+    }));
+
     const campaign = await SaleCampaign.create({
       name,
       description,
+      image_urls,
       products,
       percentage,
       startDate,
@@ -25,6 +31,12 @@ exports.createCampaign = async (req, res) => {
 exports.updateCampaign = async (req, res) => {
   try {
     const { id } = req.params;
+
+      // Nếu có file ảnh upload mới => cập nhật image_urls
+        if (req.files && req.files.length > 0) {
+            const image_urls = req.files.map(file => file.path); // file.path là đường dẫn ảnh trên Cloudinary
+            req.body.image_urls = image_urls;
+        }
     const updated = await SaleCampaign.findByIdAndUpdate(id, req.body, {
       new: true,
     });
@@ -37,6 +49,19 @@ exports.updateCampaign = async (req, res) => {
 exports.deleteCampaign = async (req, res) => {
   try {
     const { id } = req.params;
+    const campaign = await SaleCampaign.findById(id);
+    if (!campaign) {
+      return res.status(404).json({ message: "Campaign not found" });
+    }
+
+    // Xóa từng ảnh trên Cloudinary
+    if (campaign.image_urls && campaign.image_urls.length > 0) {
+      for (const img of campaign.image_urls) {
+        if (img.public_id) {
+          await cloudinary.uploader.destroy(img.public_id);
+        }
+      }
+    }
     await SaleCampaign.findByIdAndDelete(id);
     res.json({ success: true, message: "Campaign deleted" });
   } catch (err) {
