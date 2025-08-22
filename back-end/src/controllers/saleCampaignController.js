@@ -1,14 +1,42 @@
 const SaleCampaign = require("../models/saleCampaign");
 const Product = require("../models/product");
+const { cloudinary } = require("../../config/cloudinary");
 
 exports.createCampaign = async (req, res) => {
   try {
-    const { name, description, products, percentage, startDate, endDate } =
-      req.body;
+    console.log("REQ BODY:", req.body);
+
+    const { name, description } = req.body;
+
+    if (!name) {
+      return res.status(400).json({ message: "Name is required" });
+    }
+
+    const percentage = Number(req.body.percentage);
+    if (isNaN(percentage)) {
+      return res.status(400).json({ message: "Percentage must be a number" });
+    }
+
+    const startDate = new Date(req.body.startDate);
+    const endDate = new Date(req.body.endDate);
+
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      return res.status(400).json({ message: "Invalid date format" });
+    }
+
+    // ép kiểu cho products (nếu FE gửi string json)
+    let products = [];
+    if (req.body.products) {
+      try {
+        products = JSON.parse(req.body.products);
+      } catch (err) {
+        return res.status(400).json({ message: "Invalid products format" });
+      }
+    }
 
     const image_urls = req.files.map(file => ({
-      url: file.path,           // Cloudinary URL hoặc local path
-      public_id: file.filename  // public_id từ Cloudinary hoặc tên file
+      url: file.path,
+      public_id: file.filename
     }));
 
     const campaign = await SaleCampaign.create({
@@ -24,19 +52,24 @@ exports.createCampaign = async (req, res) => {
 
     res.status(201).json({ success: true, data: campaign });
   } catch (err) {
+    console.error("Create Campaign Error:", err);
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
 
 exports.updateCampaign = async (req, res) => {
   try {
     const { id } = req.params;
 
       // Nếu có file ảnh upload mới => cập nhật image_urls
-        if (req.files && req.files.length > 0) {
-            const image_urls = req.files.map(file => file.path); // file.path là đường dẫn ảnh trên Cloudinary
-            req.body.image_urls = image_urls;
-        }
+    if (req.files && req.files.length > 0) {
+      req.body.image_urls = req.files.map(file => ({
+        url: file.path,
+        public_id: file.filename
+      }));
+    }
+
     const updated = await SaleCampaign.findByIdAndUpdate(id, req.body, {
       new: true,
     });
