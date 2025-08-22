@@ -20,6 +20,9 @@ import { CartComponent } from './pages/product/cart/cart.component';
 import { ToastComponent } from './components/toast/toast.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+
 import {MatTreeModule} from '@angular/material/tree';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { DashboardComponent } from './pages/admin/dashboard/dashboard.component';
@@ -66,7 +69,9 @@ import { CategoryCollectionManagementComponent } from './pages/admin/category-co
     HttpClientModule,
     MatTreeModule,
     MatExpansionModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    MatFormFieldModule,
+    MatSelectModule
   ],
   providers: [
     provideClientHydration(),

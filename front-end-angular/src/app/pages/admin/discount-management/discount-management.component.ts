@@ -158,7 +158,7 @@ export class DiscountManagementComponent implements OnInit {
 
   changeActive(){
     this.selectedDiscount.isActive = !this.selectedDiscount.isActive;
-    this.discountService.updateDiscount(this.editingDiscount._id, this.selectedDiscount.isActive).subscribe({
+    this.discountService.updateDiscount(this.editingDiscount._id, this.selectedDiscount).subscribe({
       next: () => {
         this.toast.show(`Discount ${this.selectedDiscount.isActive ? 'activated' : 'deactivated'} successfully`);
         this.loadDiscounts();

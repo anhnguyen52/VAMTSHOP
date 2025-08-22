@@ -1,11 +1,12 @@
 const express = require("express");
 const saleCampaignController = require("../controllers/saleCampaignController");
+const { uploadMultiple } = require("../../config/cloudinary");
 
 const saleCampaignRouter = express.Router();
 
-saleCampaignRouter.post("/create", saleCampaignController.createCampaign);
+saleCampaignRouter.post("/create",uploadMultiple, saleCampaignController.createCampaign);
 
-saleCampaignRouter.put("/update/:id", saleCampaignController.updateCampaign);
+saleCampaignRouter.put("/update/:id",uploadMultiple, saleCampaignController.updateCampaign);
 
 saleCampaignRouter.delete("/delete/:id", saleCampaignController.deleteCampaign);
 
