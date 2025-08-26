@@ -1,120 +1,197 @@
-const Order = require('../models/order');
+const Order = require("../models/order");
+const Product = require("../models/product");
+const Cart = require("../models/cart");
+const Discount = require("../models/discount");
+const User = require("../models/user");
+const sendEmail = require("../utils/sendMail");
+const { applySaleCampaignsToProducts } = require("../utils/applyDiscount");
 
 const createOrder = async (req, res) => {
-    try {
-        const { user_id, order_details, paymentMethod} = req.body;
+  try {
+    const cart = await Cart.findOne({ user: req.user.id });
 
-        // if (!user_id || !order_details.length) {
-        //     return res.status(400).json({ message: "Missing required fields" });
-        // }
-
-        // Tính tổng tiền dựa trên order_details
-        const total_price = order_details.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
-        const newOrder = new Order({
-            user_id,
-            total_price,
-            order_details,
-            paymentMethod
-        });
-
-        await newOrder.save();
-        res.status(201).json({ message: "Order created successfully", order: newOrder });
-    } catch (error) {
-        res.status(500).json({ message: "Server error", error: error.message });
+    if (!cart || cart.cartItems.length === 0) {
+      return res.status(400).json({ message: "Giỏ hàng không được để trống!" });
     }
+
+    const { shippingInfo, paymentMethod, discountUsed, pointUsed } = req.body;
+    const discount = discountUsed ? await Discount.findById(discountUsed) : null;
+    const userId = req.user.id;
+
+    // Lấy danh sách sản phẩm và áp dụng giảm giá
+    const productIds = cart.cartItems.map((item) => item.product);
+    const products = await Product.find({ _id: { $in: productIds } });
+    const discountedProducts = await applySaleCampaignsToProducts(products);
+
+    // Tính tổng tiền
+    let totalAmount = 0;
+    let items = [];
+    let itemsHtml = "";
+
+    for (const item of cart.cartItems) {
+      const product = discountedProducts.find(
+        (p) => p._id.toString() === item.product.toString()
+      );
+      if (!product) {
+        return res
+          .status(404)
+          .json({ message: `Sản phẩm ID ${item.product} không tồn tại!` });
+      }
+      if (product.stock < item.quantity) {
+        return res
+          .status(400)
+          .json({ message: `Sản phẩm "${product.name}" không đủ hàng!` });
+      }
+
+      const itemTotal = product.price * item.quantity;
+      totalAmount += itemTotal;
+
+      items.push({
+        product: product._id,
+        quantity: item.quantity,
+        price: product.price,
+      });
+
+      itemsHtml += `
+        <tr>
+          <td style="padding: 10px; font-size: 14px; color: #2c3e50;">${product.name}</td>
+          <td style="padding: 10px; font-size: 14px; color: #2c3e50; text-align: right;">${item.quantity}</td>
+          <td style="padding: 10px; font-size: 14px; color: #2c3e50; text-align: right;">${itemTotal.toLocaleString(
+            "vi-VN"
+          )} VND</td>
+        </tr>`;
+    }
+
+    // Áp dụng mã giảm giá
+    if (discount) {
+      if (discount.type === "fixed") {
+        totalAmount -= discount.value;
+      } else if (discount.type === "percentage") {
+        totalAmount -= (totalAmount * discount.value) / 100;
+      }
+    }
+
+    // Trừ điểm
+    totalAmount -= pointUsed;
+
+    // Giới hạn COD
+    if (paymentMethod === "COD" && totalAmount > 500000) {
+      return res.status(400).json({
+        message: "Thanh toán khi nhận hàng chỉ áp dụng cho đơn dưới 500.000đ",
+      });
+    }
+
+    const newOrder = new Order({
+      user: userId,
+      items,
+      shippingInfo,
+      paymentMethod,
+      discountUsed,
+      pointUsed,
+      paymentStatus: "Pending",
+      orderStatus: "Pending",
+    });
+
+    const savedOrder = await newOrder.save();
+
+    // Xóa giỏ hàng sau khi tạo đơn
+    await Cart.findOneAndUpdate(
+      { user: userId },
+      { $set: { cartItems: [] } },
+      { new: true }
+    );
+
+    // Cập nhật số lượt dùng mã giảm giá (nếu có)
+    if (savedOrder && discount) {
+      discount.usedCount = discount.usedCount + 1;
+      await discount.save();
+    }
+
+    // Gửi email xác nhận
+    const user = await User.findById(userId);
+    const shippingInfoStr = `${shippingInfo.address}, ${shippingInfo.provineName}, ${shippingInfo.districtName}, ${shippingInfo.wardName}`;
+    await sendEmail(
+      user.email,
+      {
+        orderId: savedOrder._id.toString(),
+        paymentMethod:
+          paymentMethod === "COD"
+            ? "Thanh toán khi nhận hàng"
+            : "Thanh toán trực tuyến",
+        totalAmount,
+        itemsHtml,
+        shippingInfo: shippingInfoStr,
+      },
+      "orderConfirmation"
+    );
+
+    res.status(201).json({ data: savedOrder, totalAmount });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
-// 2️⃣ Cập nhật trạng thái đơn hàng
-const updateOrderStatus = async (req, res) => {
-    try {
-        const { orderId } = req.params;
-        const { order_status } = req.body;
+async function getMyOrders(req, res) {
+  try {
+    const orders = await Order.find({ user: req.user._id })
+      .populate("items.product", "name images price")
+      .sort({ createdAt: -1 });
+    return res.json({ data: orders });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Server error" });
+  }
+}
 
-        const validStatus = ["pending", "completed", "cancelled"];
-        if (!validStatus.includes(order_status)) {
-            return res.status(400).json({ message: "Invalid order status" });
-        }
+// Chi tiết đơn hàng
+async function getOrderDetails(req, res) {
+  const orderId = req.params.id;
+  const user = req.user;
+  try {
+    const order = await Order.findById(orderId)
+      .populate("items.product", "name images price")
+      .populate("discountUsed", "code value type");
 
-        const updatedOrder = await Order.findByIdAndUpdate(orderId, { order_status }, { new: true });
-
-        if (!updatedOrder) {
-            return res.status(404).json({ message: "Order not found" });
-        }
-
-        res.json({ message: "Order status updated successfully", order: updatedOrder });
-    } catch (error) {
-        res.status(500).json({ message: "Server error", error: error.message });
+    if (!order) {
+      return res.status(404).json({ message: "Không tìm thấy đơn hàng" });
     }
-};
-
-// 3️⃣ Xem tất cả đơn hàng
-const getAllOrders = async (req, res) => {
-    try {
-        const orders = await Order.find().populate("user_id").populate("order_details.product_id");
-        res.json(orders);
-    } catch (error) {
-        res.status(500).json({ message: "Server error", error: error.message });
+    if (
+      order.user.toString() !== user._id.toString() &&
+      user.role !== "admin"
+    ) {
+      return res.status(403).json({ message: "Forbidden" });
     }
-};
 
-// 4️⃣ Xem đơn hàng theo userId
-const getOrdersByUserId = async (req, res) => {
-    try {
-        const { userId } = req.params;
-        const orders = await Order.find({ user_id: userId }).populate("order_details.product_id");
+    return res.status(200).json({ data: order });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: error.message });
+  }
+}
 
-        if (!orders.length) {
-            return res.status(404).json({ message: "No orders found for this user" });
-        }
+// Hủy đơn hàng
+async function cancelOrder(req, res) {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order)
+      return res.status(404).json({ message: "Không tìm thấy đơn hàng" });
 
-        res.json(orders);
-    } catch (error) {
-        res.status(500).json({ message: "Server error", error: error.message });
+    if (order.paymentStatus !== "Pending" || order.orderStatus !== "Pending") {
+      return res.status(400).json({ message: "Đơn hàng không thể hủy" });
     }
-};
 
-// 5️⃣ Tính tổng số tiền đã chi cho đơn hàng của user
-const getTotalSpentByUser = async (req, res) => {
-    try {
-        const { userId } = req.params;
+    order.orderStatus = "Cancelled";
+    await order.save();
 
-        const totalSpent = await Order.aggregate([
-            { $match: { user_id: userId } },
-            { $group: { _id: "$user_id", total_spent: { $sum: "$total_price" } } }
-        ]);
-
-        if (!totalSpent.length) {
-            return res.status(404).json({ message: "No orders found for this user" });
-        }
-
-        res.json({ userId, total_spent: totalSpent[0].total_spent });
-    } catch (error) {
-        res.status(500).json({ message: "Server error", error: error.message });
-    }
-};
-
-const getOrderDetailById = async (req, res) => {
-    try {
-        const { orderId } = req.params;
-
-        const order = await Order.findOne({_id :orderId}).populate("order_details.product_id");
-        if (!order) {
-            return res.status(404).json({ message: "Order not found" });
-        }
-        console.log(order)
-
-        res.status(200).json(order);
-    } catch (error) {
-        res.status(500).json({ message: "Server error", error: error.message });
-    }
-};
+    res.json({ message: "Đã hủy đơn hàng" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
 
 module.exports = {
-    createOrder,
-    updateOrderStatus,
-    getAllOrders,
-    getOrdersByUserId,
-    getTotalSpentByUser,
-    getOrderDetailById 
+  createOrder,
+  getMyOrders,
+  getOrderDetails,
+  cancelOrder,
 };

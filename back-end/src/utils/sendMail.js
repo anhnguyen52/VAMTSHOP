@@ -3,39 +3,56 @@ const path = require("path");
 const fs = require("fs");
 require("dotenv").config();
 
-const templatePath = path.join(__dirname, "otpTemplate.html");
+const templatePath = path.join(process.cwd(), "src", "utils", "otpTemplate.html");
 const emailTemplate = fs.readFileSync(templatePath, "utf8");
 
-const sendEmail = async (email, otp, type) => {
-    try {
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS,
-        },
-      });
+const orderTemplatePath = path.join(process.cwd(), "src", "utils", "orderTemplate.html");
+const orderTemplate = fs.readFileSync(orderTemplatePath, "utf8");
+const sendEmail = async (email, data, type) => {
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
 
-      let emailHtml = emailTemplate.replace("{{OTP}}", otp);
-      if(type === "register") {
-        emailHtml = emailHtml.replace("{{TITLE}}", "Xác nhận đăng ký tài khoản");
-      }
-      else if(type === "reset-password") {
-        emailHtml = emailHtml.replace("{{TITLE}}", "Xác nhận đặt lại mật khẩu");
-      }
-      const mailOptions = {
-        from: `<${process.env.EMAIL_USER}>`, // Hiển thị tên thương hiệu
-        to: email,
-        subject: "Xác nhận đăng ký - Mã OTP của bạn",
-        html: emailHtml,
-      };
-      
-  
-      await transporter.sendMail(mailOptions);
-    } catch (error) {
-      console.log("Lỗi khi gửi email:", error);
-      throw new Error("Không thể gửi email. Vui lòng thử lại!");
+    let emailHtml, subject;
+    if (type === "register") {
+      emailHtml = emailTemplate
+        .replace("{{OTP}}", data)
+        .replace("{{TITLE}}", "Xác nhận đăng ký tài khoản");
+      subject = "Xác nhận đăng ký - Mã OTP của bạn";
+    } else if (type === "reset-password") {
+      emailHtml = emailTemplate
+        .replace("{{OTP}}", data)
+        .replace("{{TITLE}}", "Xác nhận đặt lại mật khẩu");
+      subject = "Xác nhận đặt lại mật khẩu - Mã OTP của bạn";
+    } else if (type === "orderConfirmation") {
+      emailHtml = orderTemplate
+        .replace("{{ORDER_ID}}", data.orderId)
+        .replace("{{PAYMENT_METHOD}}", data.paymentMethod)
+        .replace("{{TOTAL_AMOUNT}}", data.totalAmount.toLocaleString("vi-VN"))
+        .replace("{{ITEMS}}", data.itemsHtml)
+        .replace("{{SHIPPING_INFO}}", data.shippingInfo);
+      subject = "Xác nhận đơn hàng thành công";
     }
+    const mailOptions = {
+      from: `"NewBooks " <${process.env.EMAIL_USER}>`, // Hiển thị tên thương hiệu
+      to: email,
+      subject,
+      html: emailHtml,
+      text: type === "orderConfirmation"
+        ? `Chào bạn,\n\nCảm ơn bạn đã đặt hàng tại NewBooks!\n\nMã đơn hàng: ${data.orderId}\nPhương thức thanh toán: ${data.paymentMethod}\nTổng tiền: ${data.totalAmount.toLocaleString("vi-VN")} VND\n\nThông tin giao hàng: ${data.shippingInfo}\n\nChúng tôi sẽ thông báo khi đơn hàng được xử lý.\n\nTrân trọng,\nNewBooks`
+        : `Chào bạn,\n\nMã OTP của bạn là: ${data.otp}\nMã này sẽ hết hạn sau 5 phút.\n\nVui lòng không chia sẻ mã này với bất kỳ ai.\nNếu bạn không yêu cầu mã này, vui lòng thay đổi mật khẩu ngay lập tức.\n\nTrân trọng,\nNewBooks`,
+    };
+
+
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    console.log("Lỗi khi gửi email:", error);
+  }
 };
 
 module.exports = sendEmail;
