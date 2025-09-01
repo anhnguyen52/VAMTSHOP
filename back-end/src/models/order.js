@@ -84,6 +84,21 @@ const orderSchema = new mongoose.Schema(
       unique: true,
     },
 
+    isReturned: {
+      type: Boolean,
+      default: false,
+    },
+
+    boxInfo: {
+      type: {
+        weight: { type: Number, required: true, min: 0 },
+        length: { type: Number, required: true, min: 0 },
+        height: { type: Number, required: true, min: 0 },
+        width: { type: Number, required: true, min: 0 },
+      },
+      default: null,
+    },
+
     expireAt: {
       type: Date,
       default: () => new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
@@ -92,4 +107,22 @@ const orderSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Order", orderSchema);
+orderSchema.pre("save", function (next) {
+  if (this.boxInfo !== null) {
+    if (
+      !this.boxInfo.length ||
+      !this.boxInfo.weight ||
+      !this.boxInfo.height ||
+      !this.boxInfo.width
+    ) {
+      return next(
+        new Error(
+          "All boxInfo fields (weight, length, width, height) must be provided"
+        )
+      );
+    }
+  }
+  next();
+});
+
+module.exports = mongoose.model("Order", orderSchema, "Orders");
