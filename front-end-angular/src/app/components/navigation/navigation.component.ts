@@ -33,7 +33,7 @@ export class NavigationComponent {
       label: 'Đơn hàng',
       open: true,
       children: [
-        { label: 'Quản lý đơn hàng', link: '/AdminLayout/page-list' },
+        { label: 'Quản lý đơn hàng', link: '/AdminLayout/Order-management' },
       ]
     },
     {

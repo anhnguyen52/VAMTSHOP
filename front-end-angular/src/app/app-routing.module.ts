@@ -18,6 +18,7 @@ import { CategoryCollectionManagementComponent } from './pages/admin/category-co
 import { UserManagementComponent } from './pages/admin/user-management/user-management.component';
 import { DiscountManagementComponent } from './pages/admin/discount-management/discount-management.component';
 import { SaleCampaignManagementComponent } from './pages/admin/sale-campaign-management/sale-campaign-management.component';
+import { OrderManagementComponent } from './pages/admin/order-management/order-management.component';
 const routes: Routes = [
   {path: '', component: HomeComponent },
   {path: 'Login', component: LoginComponent},
@@ -39,6 +40,8 @@ const routes: Routes = [
 
       {path: 'Discount-management', component: DiscountManagementComponent, canActivate: [AuthGuard]},
       {path: 'Sale-campaign-management', component: SaleCampaignManagementComponent, canActivate: [AuthGuard]},
+
+      {path: 'Order-management', component: OrderManagementComponent, canActivate: [AuthGuard]},
     ]
   }
 
