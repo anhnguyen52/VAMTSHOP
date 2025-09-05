@@ -1,12 +1,16 @@
 const { cloudinary } = require("../../config/cloudinary");
 const Product = require("../models/product");
+const { applySaleCampaignsToProducts } = require("../utils/applyDiscount");
 
 const getAllProducts = async (req, res) => {
     try {
         const products = await Product.find()
             .populate("category_id")
             .populate("collection_id");
-        return res.status(200).json(products);
+
+        const productWithSale = await applySaleCampaignsToProducts(products);
+
+        return res.status(200).json(productWithSale);
     } catch (err) {
         return res.status(500).json({ message: err.message });
     }
@@ -19,7 +23,10 @@ const getLatestProducts = async (req, res) => {
             .limit(4)
             .populate("category_id")
             .populate("collection_id");
-        return res.status(200).json(products);
+
+        const productWithSale = await applySaleCampaignsToProducts(products);
+
+        return res.status(200).json(productWithSale);
     } catch (err) {
         return res.status(500).json({ message: err.message });
     }
@@ -34,7 +41,8 @@ const getProductById = async (req, res) => {
         if (!product) {
             return res.status(404).json({ message: "Product not found" });
         }
-        return res.status(200).json(product);
+        const productWithSale = await applySaleCampaignsToProducts([product]);
+        return res.status(200).json(productWithSale[0]);
     } catch (err) {
         return res.status(500).json({ message: err.message });
     }
@@ -93,6 +101,11 @@ const createProduct = async (req, res) => {
 
     return res.status(201).json(newProduct);
   } catch (err) {
+      if (req.files && req.files.length > 0) {
+        for (const file of req.files) {
+          await cloudinary.uploader.destroy(file.filename);
+        }
+      }
     return res.status(500).json({ message: err.message });
   }
 };

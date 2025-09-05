@@ -64,8 +64,6 @@ export class CartComponent implements OnInit {
       }else{
         this.loadCartFromServer();
       }
-  
-     
     } else {
       this.isLoggedIn = false;
       const storedItems = localStorage.getItem('cartItems');
@@ -99,69 +97,73 @@ export class CartComponent implements OnInit {
     const requests = this.cartItems.map(item =>
       this.productService.getProductById(item.product_id).toPromise().then(data => ({
         data,
-        quantity: item.quantity
+        size: item.size,        
+        quantity: item.quantity,
+        price: item.price
       }))
     );
-
 
     Promise.all(requests)
       .then(results => {
         this.listItems = results;
+        console.log("Chi tiết sản phẩm trong giỏ hàng: ", this.listItems);
         this.calculateTotal();
       })
       .catch(error => console.error("Lỗi khi lấy sản phẩm:", error))
       .finally(() => this.isLoading = false);
   }
 
-  calculateTotal() {
-    this.subtotal = this.listItems.reduce(
-      (sum, item) => sum + item.data.price * item.quantity, 0
-    );
+    calculateTotal() {
+      this.subtotal = this.listItems.reduce(
+        (sum, item) => sum + item.data.price * item.quantity, 0
+      );
 
-    const isCartEmpty = this.listItems.length === 0;
-    this.shipping = (isCartEmpty || this.subtotal >= 2000000) ? 0 : 50000;
-    this.totalPrice = this.subtotal + this.shipping;
-  }
+      const isCartEmpty = this.listItems.length === 0;
+      this.shipping = (isCartEmpty || this.subtotal >= 2000000) ? 0 : 50000;
+      this.totalPrice = this.subtotal + this.shipping;
+    }
 
   updateLocalStorage() {
     localStorage.setItem('cartItems', JSON.stringify(this.cartItems));
   }
 
+  
   updateQuantity(product: any) {
-    const item = this.cartItems.find(i => i.product_id === product.data._id);
+    const item = this.cartItems.find(
+      i => i.product_id === product.data._id && i.size === product.size
+    );
     if (item) {
       item.quantity = product.quantity;
+      item.price = product.price;
     }
 
-    if(!this.isLoggedIn) {
+    if (!this.isLoggedIn) {
       this.updateLocalStorage();
     }
 
     this.calculateTotal();
   }
 
+
   increaseQuantity(product: any) {
     product.quantity++; 
     this.updateQuantity(product);
-  
+
     if (this.isLoggedIn) {
       const productId = product.data?._id;
       if (!productId) {
         console.error("Không tìm thấy productId để cập nhật giỏ hàng.");
         return;
       }
-  
-      this.cartService.addToCart(this.userId, productId, 1).subscribe({
-        next: (data) => {
-          // console.log("Đã tăng số lượng sản phẩm trong giỏ hàng (API):", data);
-        },
+
+      this.cartService.addToCart(this.userId, productId, product.size, product.price, 1).subscribe({
+        next: () => {},
         error: (error) => {
           console.error("Lỗi khi tăng số lượng sản phẩm qua API:", error);
         }
       });
     }
   }
-  
 
   decreaseQuantity(product: any) {
     if (product.quantity > 1) {
@@ -175,29 +177,36 @@ export class CartComponent implements OnInit {
         console.error("Không tìm thấy productId để cập nhật giỏ hàng.");
         return;
       }
-  
-      this.cartService.removeFromCart(this.userId, productId).subscribe({
-        next: (data) => {
-          // console.log("Đã giamr số lượng sản phẩm trong giỏ hàng (API):", data);
-        },
+
+      this.cartService.removeFromCart(this.userId, productId, product.size).subscribe({
+        next: () => {},
         error: (error) => {
-          console.error("Lỗi khi gimar số lượng sản phẩm qua API:", error);
+          console.error("Lỗi khi giảm số lượng sản phẩm qua API:", error);
         }
       });
     }
   }
 
+
   removeItem(product: any) {
     if (!this.isLoggedIn) {
-      this.cartItems = this.cartItems.filter(item => item.product_id !== product.data._id);
-      this.listItems = this.listItems.filter(item => item.data._id !== product.data._id);
+      this.cartItems = this.cartItems.filter(
+        item => !(item.product_id === product.data._id && item.size === product.size)
+      );
+      this.listItems = this.listItems.filter(
+        item => !(item.data._id === product.data._id && item.size === product.size)
+      );
       this.updateLocalStorage();
-    }else{
-      this.cartService.deleteFromCart(this.userId, product.data._id).subscribe({
-        next: (data) => {
-          // console.log("Đã xóa sản phẩm khỏi giỏ hàng (API):", data);
-          this.cartItems = this.cartItems.filter(item => item.product_id !== product.data._id);
-          this.listItems = this.listItems.filter(item => item.data._id !== product.data._id);
+    } else {
+      this.cartService.deleteFromCart(this.userId, product.data._id, product.size).subscribe({
+        next: () => {
+          this.cartItems = this.cartItems.filter(
+            item => !(item.product_id === product.data._id && item.size === product.size)
+          );
+          this.listItems = this.listItems.filter(
+            item => !(item.data._id === product.data._id && item.size === product.size)
+          );
+          this.calculateTotal();
         },
         error: (error) => {
           console.error("Lỗi khi xóa sản phẩm qua API:", error);
@@ -206,6 +215,7 @@ export class CartComponent implements OnInit {
     }
     this.calculateTotal();
   }
+
 
   formatCurrency(value: number): string {
     return new Intl.NumberFormat('vi-VN').format(value);
