@@ -66,10 +66,14 @@
                 <img src="{{product.image_urls[0].url}}" alt="" class="w-full rounded-t-lg">
               </div>
               <div>
-                <h1 class="text-[20px] font-bold text-gray-800 mt-2">{{product.product_name}}</h1>
+                <p class="text-[22px] text-xl/8 text-gray-800 mt-2">{{product.product_name}}</p>
               </div>
-              <div class="mt-auto">
-                <p class="text-gray-500 text-[14px]"> {{formatCurrency(product.price)}} vnđ</p>
+              <div *ngIf="product?.saledPrice" class="mt-auto">
+                <small class="text-gray-500 text-[13px] line-through"> {{formatCurrency(product?.price)}} vnđ</small>
+                <p class="text-gray-500 font-semibold text-[15px]">{{formatCurrency(product?.saledPrice)}} vnđ</p>
+              </div>
+              <div *ngIf="!product?.saledPrice" class="mt-auto">
+                <p class="text-gray-500 font-semibold text-[15px]">{{formatCurrency(product?.price)}} vnđ</p>
               </div>
           </div>
         </div>

@@ -31,7 +31,7 @@
             <img [src]="product.image_urls[0].url" alt="{{ product.product_name }}" class="w-24 h-24 object-contain rounded" />
           </td>
           <td class="px-4 py-2 border">{{ product.product_name }}</td>
-          <td class="px-4 py-2 border">{{ product.price | currency:'VND' }}</td>
+          <td class="px-4 py-2 border">{{ product?.price | currency:'VND' }}</td>
           <td class="px-4 py-2 border">{{ product.stock }}</td>
           <td class="px-4 py-2 border">
             <span

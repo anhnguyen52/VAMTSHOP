@@ -8,12 +8,15 @@ import { ToastService } from '../../../service/toast.service';
 @Component({
   selector: 'app-detail-product',
   templateUrl: './detail-product.component.html',
-  styleUrl: './detail-product.component.css'
+  styleUrls: ['./detail-product.component.css']
 })
+
 export class DetailProductComponent implements OnInit {
 
   productId: string | null = null;
   product: any = null;
+  size: string | null = null;
+  price: number | null = null;
   items: string[] = ['Item 1', 'Item 2', 'Item 3', 'Item 4'];
   faArrowRight = faArrowRight;
   faArrowLeft = faArrowLeft;
@@ -51,6 +54,7 @@ export class DetailProductComponent implements OnInit {
     this.productService.getProductById(id).subscribe(
       (data) =>{
         this.product = data;
+        this.price = this.product.saledPrice ? this.product.saledPrice : this.product.price;
         this.isLoading = false;
         // console.log("Chi tiết sản phẩm: ", this.product);
       },
@@ -93,7 +97,17 @@ export class DetailProductComponent implements OnInit {
   
     if (user) {
       const userId = JSON.parse(user)._id;
-      this.cartService.addToCart(userId, productId, 1).subscribe(
+      if(!this.size){
+        this.toastService.show("Vui lòng chọn size trước khi thêm vào giỏ hàng.");
+        return;
+      }
+
+      if(!this.price){
+        this.toastService.show("Giá sản phẩm không hợp lệ.");
+        return;
+      }
+
+      this.cartService.addToCart(userId, productId, this.size, 1 , this.price).subscribe(
         (data) => {
           console.log("Thêm sản phẩm vào giỏ hàng thành công: ", data);
           this.toastService.show('Đã thêm vào giỏ hàng!');
@@ -108,13 +122,13 @@ export class DetailProductComponent implements OnInit {
       const cartItemsString = localStorage.getItem('cartItems');
       this.cartItems = cartItemsString ? JSON.parse(cartItemsString) : [];
   
-      const index = this.cartItems.findIndex(item => item.product_id === productId);
+      const index = this.cartItems.findIndex(item => item.product_id === productId && item.size === this.size);
   
       if (index !== -1) {
         this.cartItems[index].quantity += 1;
         console.log("Cập nhật số lượng sản phẩm trong giỏ hàng: ", this.cartItems);
       } else {
-        this.cartItems.push({ product_id: productId, quantity: 1 });
+        this.cartItems.push({ product_id: productId, size: this.size, quantity: 1, price: this.price });
         console.log("Thêm sản phẩm mới vào giỏ hàng: ", this.cartItems);
       }
   

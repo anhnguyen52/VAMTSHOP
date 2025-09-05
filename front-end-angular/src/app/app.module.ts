@@ -35,6 +35,8 @@ import { DiscountManagementComponent } from './pages/admin/discount-management/d
 import { SaleCampaignManagementComponent } from './pages/admin/sale-campaign-management/sale-campaign-management.component';
 import { CreateProductComponent } from './pages/admin/product-management/create-product/create-product.component';
 import { CategoryCollectionManagementComponent } from './pages/admin/category-collection-management/category-collection-management.component';
+import { BestSellerComponent } from './pages/best-seller/best-seller.component';
+import { SaleCampaignComponent } from './pages/sale-campaign/sale-campaign.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -59,6 +61,8 @@ import { CategoryCollectionManagementComponent } from './pages/admin/category-co
     SaleCampaignManagementComponent,
     CreateProductComponent,
     CategoryCollectionManagementComponent,
+    BestSellerComponent,
+    SaleCampaignComponent,
   ],
   imports: [
     BrowserModule,
