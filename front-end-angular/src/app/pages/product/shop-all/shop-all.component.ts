@@ -4,6 +4,9 @@ import { Router } from '@angular/router';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
+import { CategoryService } from '../../../service/category.service';
+import { CollectionService } from '../../../service/collection.service';
+import { forkJoin } from 'rxjs';
 
 
 interface CategoryNode {
@@ -11,28 +14,6 @@ interface CategoryNode {
   type: 'category' | 'collection';
   children?: CategoryNode[];
 }
-
-const TREE_DATA: CategoryNode[] = [
-  { name: 'All', type: 'category' },
-  { name: 'Bags', type: 'category' },
-  { name: 'Clothing', type: 'category' },
-  { name: 'Jewelry', type: 'category' },
-  { name: 'Accessories', type: 'category' },
-  { name: 'Lifestyle', type: 'category' },
-  {
-    name: 'Collections',
-    type: 'category',
-    children: [
-      { name: 'THE ROOK Y25', type: 'collection' },
-      { name: 'THE KNIGHT D621', type: 'collection' },
-      { name: 'NEW WAVE SPRING D523', type: 'collection' },
-      { name: 'ATHLETE YE24', type: 'collection' },
-      { name: 'THE PAWN Y24', type: 'collection' },
-      { name: 'THE SUMMER Y25', type: 'collection' },
-    ]
-  },
-];
-
 
 @Component({
   selector: 'app-shop-all',
@@ -62,12 +43,14 @@ export class ShopAllComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private productService: ProductService
+    private productService: ProductService,
+    private categoryService: CategoryService,
+    private collectionService: CollectionService,
   ) {}
 
   ngOnInit(): void {
     this.getAllProducts();
-    this.dataSource.data = TREE_DATA;
+    this.loadCategoryOrCollection();
   }
 
   getAllProducts() {
@@ -82,6 +65,27 @@ export class ShopAllComponent implements OnInit {
         console.error("Lỗi khi lấy sản phẩm mới: ", error);
       }
     );
+  }
+
+  loadCategoryOrCollection(){
+    forkJoin({
+      categories: this.categoryService.getCategory(),
+      collections: this.collectionService.getAllCollection()
+    }).subscribe({
+      next: ({categories, collections}) => {
+        const treeData : CategoryNode[] = [
+          {name: "All", type: 'category'},
+          ...categories.map((cat:any) => ({name: cat.category_name, type: 'category'})),
+          {name: 'Collections', type: 'category',
+            children: collections.map((col:any) => ({name: col.collection_name, type: 'collection'}))
+          }
+        ]
+        this.dataSource.data = treeData;
+      }, 
+      error: (err) => {
+        console.error("Lỗi khi lấy danh mục hoặc bộ sưu tập: ", err);
+      }
+    });
   }
 
   filterProduct(node: CategoryNode) {

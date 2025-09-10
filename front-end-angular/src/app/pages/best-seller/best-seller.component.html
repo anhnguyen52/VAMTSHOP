@@ -1,1 +1,67 @@
-<p>best-seller works!</p>
+<app-header class="sticky top-0 z-50"></app-header>
+
+<div class=" mx-20 my-10">
+  <div>
+    <p class="text-3xl font-bold"> Best Seller Product</p>
+    <p class="text-gray-500">Check out our latest best seller products !</p>
+  </div>
+
+  <hr>
+
+  <div class="mt-5 ">
+        <p class="text-xl font-bold mt-6">Category</p>
+        <ul class="flex flex-wrap mt-3">
+            <li *ngFor="let Category of categories; let last = last"
+                class="flex-1 text-center px-4 py-2 liCollection"
+                [ngClass]="{'border-r border-gray-400': !last, 'bg-gray-200': Category.category_name === selectedCategory}"
+                (click)="selectCategory(Category.category_name)">
+                {{ Category.category_name }}
+            </li>
+        </ul>
+    </div>
+
+  <div class="mt-10">
+    <p class="text-xl font-bold mt-6">Collections</p>
+    <ul class="flex flex-wrap mt-3">
+        <li *ngFor="let collection of collections; let last = last"
+            class="flex-1 text-center px-4 py-2 liCollection"
+            [ngClass]="{'border-r border-gray-400': !last , 'bg-gray-200': collection.collection_name === selectedCollection}"
+            (click)="selectCollection(collection.collection_name)">
+            {{ collection.collection_name }}
+        </li>
+    </ul>
+
+    <div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 my-10">
+      <div *ngFor="let product of filterProduct" 
+            class="bg-white w-full max-w-[400px] mx-auto p-4 flex flex-col rounded-2xl
+            transition duration-300 ease-in-out transform hover:scale-105  cursor-pointer product" 
+            (click)="gotoDetailProduct(product._id)">
+            <div>
+                <img [src]="product.image_urls[0].url" alt="" class="w-full rounded-t-lg object-cover">
+            </div>
+            <div>
+                <p class="text-[22px] text-xl/8 text-gray-800 mt-2">{{product.product_name}}</p>
+            </div>
+            <div class="flex justify-between">
+                <div>
+                     <div *ngIf="product?.saledPrice">
+                        <p class="text-gray-500 font-semibold text-[15px]">{{formatCurrency(product?.saledPrice)}} vnđ</p>
+                        <small class="text-gray-500 text-[12px] line-through"> {{formatCurrency(product?.price)}} vnđ</small>
+                    </div>
+                    <div *ngIf="!product?.saledPrice" >
+                        <p class="text-gray-500 font-semibold text-[15px]">{{formatCurrency(product?.price)}} vnđ</p>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-gray-600 text-[12px] mt-2">500+ sold</p>
+                </div>
+            </div>
+           
+        </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>
