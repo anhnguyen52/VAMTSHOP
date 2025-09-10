@@ -3,7 +3,7 @@
 <div class="grid grid-cols-5 gap-10 mx-20 my-10">
     <div *ngIf="isShowMenu" class="col-span-1 border-r-2 border-gray-300 " >
       <div class="sticky top-[120px] max-h-[calc(100vh-120px)] overflow-y-auto pr-2">
-          <h1 class="text-[25px] font-bold " >What do you want?</h1>
+          <p class="text-3xl font-bold">What do you want</p>
           <div>
              <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
               <!-- Node không có con -->
@@ -41,7 +41,7 @@
 
     <div class="col-span-4" [ngClass]="{ 'col-span-5': !isShowMenu, 'col-span-4': isShowMenu }">
         <div class="flex flex-row justify-between">
-            <h1 class="text-[25px] font-bold">Products</h1>
+            <p class="text-3xl font-bold">Products</p>
             <div class="flex flex-row gap-5">
                 <button class="btn-style " (click)="toggleMenu()">{{statusMenu}}</button>
                 <div class="relative">
