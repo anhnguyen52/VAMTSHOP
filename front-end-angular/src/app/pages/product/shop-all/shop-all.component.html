@@ -60,7 +60,7 @@
         </div>
         <div class="grid grid-cols-4 gap-10 my-10 text-center">
           <div *ngFor="let product of visibleProducts" 
-                class="bg-white w-[350px] mx-auto p-4 flex flex-col min-h-[320px]
+                class="relative bg-white w-full max-w-[400px] mx-auto p-4 flex flex-col min-h-[320px]
                 transition duration-300 ease-in-out transform hover:scale-105  cursor-pointer " (click)="goToDetailProduct(product._id?.toString() || product._id)">
               <div>
                 <img src="{{product.image_urls[0].url}}" alt="" class="w-full rounded-t-lg">
@@ -69,11 +69,16 @@
                 <p class="text-[22px] text-xl/8 text-gray-800 mt-2">{{product.product_name}}</p>
               </div>
               <div *ngIf="product?.saledPrice" class="mt-auto">
-                <small class="text-gray-500 text-[13px] line-through"> {{formatCurrency(product?.price)}} vnđ</small>
                 <p class="text-gray-500 font-semibold text-[15px]">{{formatCurrency(product?.saledPrice)}} vnđ</p>
+                <small class="text-gray-500 text-[13px] line-through"> {{formatCurrency(product?.price)}} vnđ</small>
               </div>
               <div *ngIf="!product?.saledPrice" class="mt-auto">
                 <p class="text-gray-500 font-semibold text-[15px]">{{formatCurrency(product?.price)}} vnđ</p>
+              </div>
+              
+              <div class="absolute top-2 right-2 bg-gray-800 text-white text-[12px] font-bold px-5 py-1 rotate-45"
+                *ngIf="product?.saledPrice">
+                  Sale
               </div>
           </div>
         </div>
