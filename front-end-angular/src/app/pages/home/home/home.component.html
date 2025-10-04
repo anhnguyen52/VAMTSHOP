@@ -1,34 +1,27 @@
 <app-spinner *ngIf="isLoading"></app-spinner>
 
-<app-header class="sticky top-0 z-50"></app-header>
+<app-header class="sticky top-0 z-50" ></app-header>
 
-<div class="max-w-6xl lg:h-[calc(100vh-120px)] mx-auto mb-10 flex flex-col lg:flex-row justify-between items-center gap-6 px-4 ">
-  <div class="w-full max-w-[400px]">
-    <img src="../../../assets/image/shop.jpg" alt="" class="w-full h-full rounded-lg object-cover shadow-2xl">
-  </div>
-  <div class=" max-w-[600px] flex flex-col justify-around gap-4 slogan">
+<div class="-mt-[80px] h-[98vh] mx-auto mb-10 flex flex-col lg:flex-row justify-end items-center gap-6 px-4"
+  style="background-image: url('../../../assets/image/zara_bg.jpg'); background-size: cover; background-position: top;"
+>
+  <div class=" max-w-[500px] ">
     <div>
-     <span class="text-[100px] font-[500] leading-tight block">
+     <span class="text-[100px] text-[#f1f1f1] font-[500] leading-tight block">
         "VAMT – More than style, it’s a statement!"
       </span>
     </div>
     <div>
-      <p class="text-[16px] sm:text-[18px] font-[500]">Enjoy the great cold</p>
-      <p class="text-gray-500">vamtshop.com</p>
+      <p class="text-[16px] text-[#f1f1f1] sm:text-[18px] font-[500]">Enjoy the great cold</p>
+      <p class="text-gray-100">vamtshop.com</p>
     </div>
   </div>
 </div>
 
-<div class="my-10">
-  <img src="../../../assets/image/anhbia3.jpg" alt="" class="w-full h-auto object-cover">
-</div>
-
-
-
 <div class="mx-auto mb-[120px] px-20">
   <div class="newProduct text-center my-[100px] ">
     <p class="text-center text-[28px] sm:text-[35px] font-[500]">New Products</p>
-     <div class="w-[30%] h-[40px] bg-[#f1f1f1] text-black flex justify-around mx-auto p-2 my-[40px] rounded-lg shadow-lg">
+     <div class="w-[30%] h-[40px]  text-black flex justify-around mx-auto p-2 my-[40px]  ">
       <div class="text-[16px] sm:text-[18px] font-medium nav-filter cursor-pointer" (click)="filter('Accessories')">Accessories</div>
       <div class="text-[16px] sm:text-[18px] font-medium nav-filter cursor-pointer" (click)="filter('Bags')">Bags</div>
       <div class="text-[16px] sm:text-[18px] font-medium nav-filter cursor-pointer" (click)="filter('Clothing')">Clothing</div>
