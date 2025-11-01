@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, HostListener, Input, OnDestroy, OnInit } from '@angular/core';
 import { faCartShopping, faBars,faBagShopping, faXmark, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { AuthenticationService } from '../../service/authentication.service';
 import { Router } from '@angular/router';
@@ -7,8 +7,9 @@ import { clear } from 'node:console';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrl: './header.component.css'
+  styleUrls: ['./header.component.css']
 })
+
 export class HeaderComponent implements OnInit {
   faCart = faCartShopping;
   faBars = faBars;
@@ -23,16 +24,22 @@ export class HeaderComponent implements OnInit {
   isShrink: boolean = false;
   isShowWelcome = true;
   isHiddenAfterAnimation = false;
-
+  isOnTop = true;
   timeOut: any;
 
+
   private scrollPosition: number = 0;
+  isHomepage: boolean = false;
 
   constructor(
     private router: Router,
     private authService: AuthenticationService,
     
-  ) { }
+  ) {
+    this.router.events.subscribe(() => {
+      this.isHomepage =  this.router.url === '/';
+    })
+   }
 
   ngOnInit(): void {
     if (typeof window !== 'undefined') {
@@ -72,6 +79,8 @@ export class HeaderComponent implements OnInit {
       this.isShrink = false; // cuộn lên
       // console.log("Cuộn lên: ", currentScroll, "isShrink: ", this.isShrink);
     }
+
+    this.isOnTop = currentScroll === 0;
 
     this.scrollPosition = currentScroll;
   }

@@ -21,7 +21,7 @@ const applySaleCampaignsToProducts = async (products) => {
       return {
         ...product.toObject(),
         salePercentage,
-        price: saledPrice,
+        saledPrice: saledPrice,
       };
     }
 

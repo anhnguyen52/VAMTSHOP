@@ -69,4 +69,8 @@ export class HomeComponent implements OnInit {
   goToDetailProduct(productId:string){
     this.router.navigate([`/DetailProduct/${productId}`]);
   }
+
+  formatCurrency(value: number): string {
+    return new Intl.NumberFormat('vi-VN').format(value);
+  }
 }

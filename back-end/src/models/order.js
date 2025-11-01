@@ -81,7 +81,6 @@ const orderSchema = new mongoose.Schema(
     trackingNumber: {
       type: String,
       default: null,
-      unique: true,
     },
 
     isReturned: {
@@ -124,5 +123,10 @@ orderSchema.pre("save", function (next) {
   }
   next();
 });
+
+orderSchema.index(
+  { trackingNumber: 1 },
+  { unique: true, partialFilterExpression: { trackingNumber: { $ne: null } } }
+);
 
 module.exports = mongoose.model("Order", orderSchema, "Orders");

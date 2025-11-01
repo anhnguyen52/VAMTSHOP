@@ -87,9 +87,9 @@ const createOrder = async (req, res) => {
 
     totalAmount -= pointUsed;
 
-    if (paymentMethod === "COD" && totalAmount > 500000) {
+    if (paymentMethod === "COD" && totalAmount > 5000000) {
       return res.status(400).json({
-        message: "Thanh toán khi nhận hàng chỉ áp dụng cho đơn dưới 500.000đ",
+        message: "Thanh toán khi nhận hàng chỉ áp dụng cho đơn dưới 5.000.000đ",
       });
     }
 
@@ -239,7 +239,11 @@ const confirmOrder = async (req, res) => {
   try {
     const orderId = req.params.id;
     const order = await Order.findById(orderId)
-      .populate("items.product", "stock")
+       .populate({
+        path: "items.product",
+        populate: { path: "category_id", select: "category_name" },
+        populate: { path: "stock", select: "stock" },
+      })
       .populate("discountUsed");
     if (!order) {
       return res.status(404).json({ message: "Không tìm thấy đơn hàng" });
@@ -256,20 +260,57 @@ const confirmOrder = async (req, res) => {
       return res.status(400).json({ message: "Đơn hàng chưa được thanh toán" });
     }
 
-    if (order.boxInfo === null) {
-      return res.status(400).json({
-        message: "Vui lòng nhập thông tin (weight, length, width, height)",
-      });
-    }
+    // if (order.boxInfo === null) {
+    //   return res.status(400).json({
+    //     message: "Vui lòng nhập thông tin (weight, length, width, height)",
+    //   });
+    // }
 
+    let totalWeight = 0;
+    let maxLength = 0;
+    let maxWidth = 0;
+    let totalHeight = 0;
     let totalValue = 0;
+
     for (const item of order.items) {
       const product = item.product;
+      const categoryName = product?.category?.category_name || "Other";
+
       if (product.stock < item.quantity) {
         return res
           .status(400)
           .json({ message: `Sản phẩm "${product.product_name}" không đủ hàng!` });
       }
+
+      // Thiết lập trọng lượng & kích thước mặc định theo category
+      let categorySize = {
+        weight: 200, // gram
+        length: 20,
+        width: 20,
+        height: 5,
+      };
+
+      switch (categoryName.toLowerCase()) {
+        case "clothing":
+          categorySize = { weight: 300, length: 25, width: 20, height: 5 };
+          break;
+        case "bags":
+          categorySize = { weight: 800, length: 35, width: 25, height: 15 };
+          break;
+        case "accessories":
+          categorySize = { weight: 100, length: 10, width: 10, height: 3 };
+          break;
+        case "jewelry":
+          categorySize = { weight: 50, length: 8, width: 8, height: 4 };
+          break;
+      }
+
+      // Tính tổng khối lượng và kích thước hộp gộp
+      totalWeight += categorySize.weight * item.quantity;
+      maxLength = Math.max(maxLength, categorySize.length);
+      maxWidth = Math.max(maxWidth, categorySize.width);
+      totalHeight += categorySize.height * item.quantity;
+
       totalValue += item.price * item.quantity;
     }
 
@@ -297,14 +338,14 @@ const confirmOrder = async (req, res) => {
         to_ward_name: order?.shippingInfo?.wardName,
         content: order?._id,
         cod_amount: order?.paymentMethod === "COD" ? totalValue : 0,
-        weight: order?.boxInfo?.weight,
-        length: order?.boxInfo?.length,
-        width: order?.boxInfo?.width,
-        height: order?.boxInfo?.height,
+        weight: totalWeight,
+        length: maxLength,
+        width: maxWidth,
+        height: totalHeight,
         cod_failed_amount: totalValue,
         insurance_value: totalValue,
         service_type_id: 2,
-      },  
+      },
       {
         headers: {
           Token: GHN_TOKEN,
@@ -319,6 +360,13 @@ const confirmOrder = async (req, res) => {
       const orderCode = dataResponse?.data?.order_code;
       order.trackingNumber = orderCode;
 
+      order.boxInfo = {
+        weight: totalWeight,
+        length: maxLength,
+        width: maxWidth,
+        height: totalHeight,
+      };
+
       await Promise.all(
         order.items.map(async (item) => {
           const product = item.product;
@@ -327,9 +375,7 @@ const confirmOrder = async (req, res) => {
         })
       );
       await order.save();
-      res
-        .status(200)
-        .json({ message: "Xác nhận đơn hàng thành công", orderCode });
+      res.status(200).json({ message: "Xác nhận đơn hàng thành công", orderCode });
     } else {
       res.status(400).json({ message: dataResponse?.message });
     }

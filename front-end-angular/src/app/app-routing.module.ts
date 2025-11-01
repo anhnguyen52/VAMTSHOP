@@ -19,6 +19,8 @@ import { UserManagementComponent } from './pages/admin/user-management/user-mana
 import { DiscountManagementComponent } from './pages/admin/discount-management/discount-management.component';
 import { SaleCampaignManagementComponent } from './pages/admin/sale-campaign-management/sale-campaign-management.component';
 import { OrderManagementComponent } from './pages/admin/order-management/order-management.component';
+import { SaleCampaignComponent } from './pages/sale-campaign/sale-campaign.component';
+import { BestSellerComponent } from './pages/best-seller/best-seller.component';
 const routes: Routes = [
   {path: '', component: HomeComponent },
   {path: 'Login', component: LoginComponent},
@@ -27,6 +29,8 @@ const routes: Routes = [
   {path: 'DetailProduct/:id', component: DetailProductComponent },
   {path: 'Cart', component: CartComponent },
   {path: 'ShopAll', component: ShopAllComponent},
+  {path: 'SaleCampaign', component: SaleCampaignComponent},
+  {path: 'BestSeller', component: BestSellerComponent},
   { 
     path: 'AdminLayout', 
     component: AdminLayoutComponent, 

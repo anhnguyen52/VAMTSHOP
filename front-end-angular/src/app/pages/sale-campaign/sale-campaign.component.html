@@ -1,0 +1,93 @@
+<app-header class="sticky top-0 z-50"></app-header>
+
+<div class=" mx-20 my-10">
+  <div>
+    <p class="text-3xl font-bold">List Sale Campaign</p>
+    <p class="text-gray-500">Check out our latest sale campaigns and offers!</p>
+  </div>
+
+  <hr>
+  <div *ngFor="let campaign of saleCampaigns; let i = index" 
+       class="relative w-full my-10 h-[300px] overflow-hidden ">
+    
+    <div class="absolute inset-0 z-10 group">
+        <div class="relative h-full bg-cover bg-center transition-all duration-500 ease-in-out cursor-pointer"
+            [class.w-full]="hoveredIndex !== i"
+            [class.w-[70%]]="hoveredIndex === i"
+            [ngStyle]="{
+                'background-image': 'url(' + campaign.image_urls[0]?.url + ')'
+            }"
+            (mouseenter)="shrinkBanner(i)"
+            (mouseleave)="resetBanner()">
+        
+            <div class="absolute inset-0 bg-black/40 z-10"></div>
+
+            <div class="relative h-full flex flex-row justify-between items-center p-8 z-20">
+                <div class="h-full w-[55%] flex flex-col justify-center leading-none">
+                    <p class="text-[36px] font-bold text-white mb-2">{{ campaign.name }}</p>
+                    <p class="text-[14px] text-white leading-relaxed line-clamp-3 mb-4">{{ campaign.description }}</p>
+
+                    <button (click)="goToShopAll()" 
+                            class="w-[120px] px-4 py-2 bg-white text-black font-semibold hover:bg-gray-200 transition duration-300 rounded">
+                        Shop Now
+                    </button>
+                </div>  
+
+                <div class="h-full flex flex-col items-end justify-center leading-none">
+                    <p class="text-white text-[120px] font-bold">{{ campaign.percentage }}%</p>
+                    <p class="text-white text-[24px] font-semibold uppercase">OFF</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="absolute right-0 top-0 z-20 h-full transition-all duration-500 ease-in-out"
+         [class.w-0]="hoveredIndex !== i"
+         [class.w-[30%]]="hoveredIndex === i"
+         [class.opacity-0]="hoveredIndex !== i"
+         [class.opacity-100]="hoveredIndex === i"
+         (mouseenter)="shrinkBanner(i)"
+         (mouseleave)="resetBanner()">
+      
+      <div class="bg-white h-full flex flex-col shadow-lg cursor-pointer hover:shadow-xl transition-shadow duration-300"
+           (click)="goToProductDetail(campaign.representativeProduct._id)"
+           *ngIf="hoveredIndex === i">
+        <div class="bg-red-500 text-white text-center py-1">
+            <span class="text-[12px] font-semibold">SALE {{ campaign.percentage }}% OFF</span>
+        </div>
+        
+        <div class="flex-1 flex items-center justify-center p-4 overflow-hidden">
+          <img [src]="campaign.representativeProduct.image_urls[0].url" 
+               [alt]="campaign.representativeProduct.product_name"
+               class=" w-[200px] hover:scale-105 transition-transform duration-300">
+        </div>
+        
+        <div class="px-4 pt-6">
+          <p class="text-[16px] text-gray-800 font-medium line-clamp-2 mb-2">
+            {{campaign.representativeProduct.product_name}}
+          </p>
+
+          <div class="text-center" *ngIf="campaign.representativeProduct?.saledPrice">
+            <p class="text-red-600 font-bold text-[16px]">
+              {{formatCurrency(campaign.representativeProduct?.saledPrice)}} VNĐ
+            </p>
+            <small class="text-gray-500 text-[13px] line-through"> 
+              {{formatCurrency(campaign.representativeProduct?.price)}} VNĐ
+            </small>
+          </div>
+          
+          <div class="text-center" *ngIf="!campaign.representativeProduct?.saledPrice">
+            <p class="text-gray-600 font-bold text-[16px]">
+              {{formatCurrency(campaign.representativeProduct?.price)}} VNĐ
+            </p>
+          </div>
+        </div>
+         <button class="w-full py-1 bg-gray-900 text-white text-sm font-semibold hover:bg-gray-800 transition duration-300 ">
+            Xem chi tiết
+          </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

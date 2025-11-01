@@ -105,7 +105,30 @@ exports.deleteCampaign = async (req, res) => {
 exports.getAllCampaigns = async (req, res) => {
   try {
     const campaigns = await SaleCampaign.find().populate("products");
-    res.json({ success: true, data: campaigns });
+
+    const campaignsWithRepresentative = campaigns.map(campaign => {
+      let representativeProduct = null;
+      if (campaign.products.length > 0) {
+        const product = campaign.products.reduce((prev, current) => (prev.createdAt > current.createdAt ? prev : current));
+        const discountedPrice = Math.round(product.price - (product.price * campaign.percentage) / 100);
+        representativeProduct = {
+          ...product.toObject(),
+          saledPrice: discountedPrice
+        };
+      }
+      return { ...campaign.toObject(), representativeProduct };
+    });
+
+    const now = new Date();
+    for (const campaign of campaignsWithRepresentative) {
+        if (campaign.startDate <= now && now <= campaign.endDate) {
+          campaign.isActive = true;
+        } else {
+          campaign.isActive = false;
+        }
+      } 
+
+    res.json({ success: true, data: campaignsWithRepresentative });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
