@@ -119,7 +119,6 @@ export class CartComponent implements OnInit {
       );
 
       const isCartEmpty = this.listItems.length === 0;
-      this.shipping = (isCartEmpty || this.subtotal >= 2000000) ? 0 : 50000;
       this.totalPrice = this.subtotal + this.shipping;
     }
 
@@ -216,6 +215,9 @@ export class CartComponent implements OnInit {
     this.calculateTotal();
   }
 
+  goToOrder(){
+    this.router.navigate(['/Order']);
+  }
 
   formatCurrency(value: number): string {
     return new Intl.NumberFormat('vi-VN').format(value);

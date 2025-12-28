@@ -7,7 +7,7 @@ orderRouter.post("/create",authUserMiddleware, createOrder);
 orderRouter.get("/getAllOrders", getAllOrders);
 orderRouter.get("/getMyOrders", getMyOrders);
 orderRouter.get("/getDetails/:id", getOrderDetails);
-orderRouter.delete("/cancel/:id", cancelOrder);
+orderRouter.put("/cancel/:id", cancelOrder);
 orderRouter.put("/updateStatus/:id", updateOrderStatus);
 orderRouter.post("/confirm/:id", confirmOrder);
 orderRouter.put("/updateBoxInfo/:id", updateBoxInfo);

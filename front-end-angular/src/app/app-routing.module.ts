@@ -18,8 +18,11 @@ import { CategoryCollectionManagementComponent } from './pages/admin/category-co
 import { UserManagementComponent } from './pages/admin/user-management/user-management.component';
 import { DiscountManagementComponent } from './pages/admin/discount-management/discount-management.component';
 import { SaleCampaignManagementComponent } from './pages/admin/sale-campaign-management/sale-campaign-management.component';
+import { OrderManagementComponent } from './pages/admin/order-management/order-management.component';
 import { SaleCampaignComponent } from './pages/sale-campaign/sale-campaign.component';
 import { BestSellerComponent } from './pages/best-seller/best-seller.component';
+import { OrderPageComponent } from './pages/order-page/order-page.component';
+import { OrderSuccessComponent } from './pages/order-success/order-success.component';
 const routes: Routes = [
   {path: '', component: HomeComponent },
   {path: 'Login', component: LoginComponent},
@@ -30,6 +33,9 @@ const routes: Routes = [
   {path: 'ShopAll', component: ShopAllComponent},
   {path: 'SaleCampaign', component: SaleCampaignComponent},
   {path: 'BestSeller', component: BestSellerComponent},
+  {path: 'Order', component: OrderPageComponent},
+  {path: 'OrderSuccess', component: OrderSuccessComponent},
+
   { 
     path: 'AdminLayout', 
     component: AdminLayoutComponent, 
@@ -43,6 +49,8 @@ const routes: Routes = [
 
       {path: 'Discount-management', component: DiscountManagementComponent, canActivate: [AuthGuard]},
       {path: 'Sale-campaign-management', component: SaleCampaignManagementComponent, canActivate: [AuthGuard]},
+
+      {path: 'Order-management', component: OrderManagementComponent, canActivate: [AuthGuard]},
     ]
   }
 

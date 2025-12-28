@@ -8,6 +8,7 @@ const orderRouter = require("./orderRouter");
 const AuthRouter = require("./AuthRouter");
 const cartRouter = require("./cartRouter");
 const saleCampaignRouter = require("./saleCampaignRouter");
+const ghnRouter = require("./ghnRoute");
 
 const router = express.Router();
 
@@ -20,6 +21,7 @@ router.use("/order", orderRouter);
 router.use("/auth", AuthRouter);
 router.use("/cart", cartRouter);
 router.use("/saleCampaign", saleCampaignRouter);
+router.use("/ghn", ghnRouter);
 
 module.exports = router;
 

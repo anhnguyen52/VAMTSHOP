@@ -1,18 +1,13 @@
-const router = require("express").Router();
+const express = require('express');
 const ghnController = require("../controllers/GhnController");
 
+const ghnRouter = express.Router();
 
-router.get("/province", ghnController.getProvince);
-router.get("/district", ghnController.getDistrict);
-router.get("/ward", ghnController.getWard);
+ghnRouter.get("/province", ghnController.getProvince);
+ghnRouter.get("/district", ghnController.getDistrict);
+ghnRouter.get("/ward", ghnController.getWard);
+ghnRouter.get("/calculate-fee", ghnController.calculateFee);
+ghnRouter.get("/tracking/:orderId", ghnController.getTrackingDetails);
+ghnRouter.post("/return/:orderId", ghnController.returnOrder);
 
-
-router.get("/calculate-fee", ghnController.calculateFee);
-
-
-router.get("/tracking/:orderId", ghnController.getTrackingDetails);
-
-//Hoàn đơn hàng
-router.post("/return/:orderId", ghnController.returnOrder);
-
-module.exports = router;
+module.exports = ghnRouter;
