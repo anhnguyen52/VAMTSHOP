@@ -31,7 +31,7 @@ const createOrder = async (req, res) => {
       return res.status(400).json({ message: "Giỏ hàng không được để trống!" });
     }
 
-    const { shippingInfo, paymentMethod, discountUsed, pointUsed } = req.body;
+    const { shippingInfo, paymentMethod, discountUsed, pointUsed, subtotal, shippingFee } = req.body;
     const discount = discountUsed ? await Discount.findById(discountUsed) : null;
     const userId = req.user.id;
 
@@ -39,7 +39,7 @@ const createOrder = async (req, res) => {
     const products = await Product.find({ _id: { $in: productIds } });
     const discountedProducts = await applySaleCampaignsToProducts(products);
 
-    let totalAmount = 0;
+    let calculatedSubtotal = 0;
     let items = [];
     let itemsHtml = "";
 
@@ -59,7 +59,7 @@ const createOrder = async (req, res) => {
       }
 
       const itemTotal = product.price * item.quantity;
-      totalAmount += itemTotal;
+      calculatedSubtotal += itemTotal;
 
       items.push({
         product: product._id,
@@ -77,15 +77,38 @@ const createOrder = async (req, res) => {
         </tr>`;
     }
 
+    // Kiểm tra tính khớp giữa frontend và backend subtotal
+    if (Math.abs(calculatedSubtotal - (subtotal || 0)) > 100) {
+      return res.status(400).json({ message: "Tổng tiền sản phẩm không khớp giữa client và server!" });
+    }
+
+    let discountAmount = 0;
     if (discount) {
       if (discount.type === "fixed") {
-        totalAmount -= discount.value;
+        discountAmount = discount.value || 0;
       } else if (discount.type === "percentage") {
-        totalAmount -= (totalAmount * discount.value) / 100;
+        discountAmount = (calculatedSubtotal * (discount.value || 0)) / 100;
       }
     }
 
-    totalAmount -= pointUsed;
+    const pointUsedAmount = Number(pointUsed) || 0;
+    if (isNaN(pointUsedAmount)) {
+      return res.status(400).json({ message: "pointUsed không hợp lệ" });
+    }
+
+    const calculatedShippingFee = Number(shippingFee) || 0;
+    if (isNaN(calculatedShippingFee)) {
+      return res.status(400).json({ message: "shippingFee không hợp lệ" });
+    }
+
+    let totalAmount = calculatedSubtotal - discountAmount - pointUsedAmount + calculatedShippingFee;
+
+    if (isNaN(totalAmount) || totalAmount < 0) {
+      return res.status(400).json({ 
+        message: "Tổng tiền không hợp lệ",
+        debug: { calculatedSubtotal, discountAmount, pointUsedAmount, calculatedShippingFee, totalAmount }
+      });
+    }
 
     if (paymentMethod === "COD" && totalAmount > 5000000) {
       return res.status(400).json({
@@ -102,26 +125,31 @@ const createOrder = async (req, res) => {
       pointUsed,
       paymentStatus: "Pending",
       orderStatus: "Pending",
+      subtotal: calculatedSubtotal,
+      discountAmount,
+      pointUsedAmount,
+      shippingFee: calculatedShippingFee,
+      totalAmount
     });
 
     const savedOrder = await newOrder.save();
 
     // Xóa giỏ hàng sau khi tạo đơn
     await Cart.findOneAndUpdate(
-      { user: userId },
+      { user_id: userId },
       { $set: { items: [] } },
       { new: true }
     );
 
     // Cập nhật số lượt dùng mã giảm giá (nếu có)
     if (savedOrder && discount) {
-      discount.usedCount = discount.usedCount + 1;
+      discount.usedCount = (discount.usedCount || 0) + 1;
       await discount.save();
     }
 
     // Gửi email xác nhận
     const user = await User.findById(userId);
-    const shippingInfoStr = `${shippingInfo.address}, ${shippingInfo.provineName}, ${shippingInfo.districtName}, ${shippingInfo.wardName}`;
+    const shippingInfoStr = `${shippingInfo.address}, ${shippingInfo.provinceName || shippingInfo.provineName}, ${shippingInfo.districtName}, ${shippingInfo.wardName}`;
     await sendEmail(
       user.email,
       {
@@ -139,10 +167,10 @@ const createOrder = async (req, res) => {
 
     res.status(201).json({ data: savedOrder, totalAmount });
   } catch (error) {
+    console.error("Error creating order:", error);
     res.status(500).json({ message: error.message });
   }
 };
-
 
 const updateOrderStatus = async (req, res) => {
   try {
@@ -284,7 +312,7 @@ const confirmOrder = async (req, res) => {
 
       // Thiết lập trọng lượng & kích thước mặc định theo category
       let categorySize = {
-        weight: 200, // gram
+        weight: 200,
         length: 20,
         width: 20,
         height: 5,

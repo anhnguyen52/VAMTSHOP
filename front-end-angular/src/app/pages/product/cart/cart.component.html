@@ -15,7 +15,7 @@
                         class="w-[200px] " />
                     </div>
                     <div class="flex flex-col justify-around w-[500px]">
-                        <div>
+                        <div>   
                             <h1 class="text-[20px] font-bold text-gray-800 mt-2">{{product.data.product_name}}</h1>
                         <p class="text-gray-500 text-[14px]">Size: <strong>{{product.size}}</strong></p>
                         </div>
@@ -60,15 +60,14 @@
                 <div class="border-[1px] border-gray-200"></div>
                 <div class="mt-5">
                     <p class="text-[16px] text-gray-800">Subtotal: {{formatCurrency(subtotal)}} vnđ</p>
-                    <p class="text-[16px] text-gray-800">
-                        Shipping: {{ shipping > 0 ? formatCurrency(shipping) + ' vnđ' : 'Free' }}
-                    </p>
                     <div class="border-t-2 border-gray-200 mt-4 pt-4">
                         <h1 class="text-[16px]  text-gray-800">Total: {{formatCurrency(totalPrice)}} vnđ</h1>
                     </div>
                     <div class="mt-4 flex flex-col gap-4" *ngIf="isLoggedIn">
                         <button class="w-full h-[40px] text-[14px] font-bold bg-black text-white
-                        hover:bg-white hover:text-black hover:border-gray-950 hover:border-[4px] hover:scale-105 transtion duration-100">CHECKOUT</button>
+                        hover:bg-white hover:text-black hover:border-gray-950 hover:border-[4px] hover:scale-105 transtion duration-100"
+                            (click)="goToOrder()"
+                        >CHECKOUT</button>
                         <button class="w-full h-[40px] text-[14px] font-bold
                         hover:border-gray-950 hover:border-[4px] hover:scale-105 transition duration-200" (click)="goBackHome()">Continue Shopping</button>
                     </div>

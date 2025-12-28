@@ -44,4 +44,26 @@ export class OrderService {
     return this.http.put<any>(`${this.API_URL}/updateBoxInfo/${orderId}`, boxInfo);
   }
 
+  getProvinces(): Observable<any> { 
+    return this.http.get<any>('http://localhost:9999/api/ghn/province');
+  }
+
+  getDistricts(provinceID: string): Observable<any> {
+    return this.http.get<any>('http://localhost:9999/api/ghn/district', { params: { provinceID } });
+  }
+
+  getWards(districtID: string): Observable<any> {
+    return this.http.get<any>('http://localhost:9999/api/ghn/ward', { params: { districtID } });
+  }
+
+  calculateShippingFee(feeData: {
+      to_ward_code: string;
+      to_district_id: number;
+      weight: number;
+      insurance_value: number;
+    }): Observable<any> {
+      return this.http.get<any>('http://localhost:9999/api/ghn/calculate-fee', {
+        params: feeData
+      });
+    }
 }

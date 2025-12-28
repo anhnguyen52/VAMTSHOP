@@ -1,0 +1,182 @@
+<app-header class="sticky top-0 z-50"></app-header>
+<div class="max-w-7xl mx-auto my-10 px-4">
+  <p class="text-3xl font-bold mb-8">Order Confirmation</p>
+
+  <div *ngIf="isLoading" class="text-center py-10">
+    <p class="text-xl text-gray-600">Đang tải thông tin đơn hàng...</p>
+  </div>
+
+  <div *ngIf="!isLoading && listItems.length === 0" class="text-center py-20">
+    <p class="text-2xl text-gray-600">Giỏ hàng của bạn đang trống</p>
+    <button
+      class="mt-6 px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+    >
+      Tiếp tục mua sắm
+    </button>
+  </div>
+
+  <div
+    *ngIf="!isLoading && listItems.length > 0"
+    class="grid grid-cols-1 lg:grid-cols-2 gap-10"
+  >
+   <form #orderForm="ngForm" (ngSubmit)="onSubmit(orderForm)" class="space-y-8">
+      <div >
+        <div class="mb-8">
+          <h2 class="text-2xl font-bold mb-4">Thông tin liên hệ</h2>
+          <div class="grid grid-cols-2 gap-5">
+            <input type="text" placeholder="Họ và tên *" name="name" [(ngModel)]="orderData.name" required
+                   class="p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-black" />
+            <input type="tel" placeholder="Số điện thoại *" name="phoneNumber" [(ngModel)]="orderData.phoneNumber" required
+                   pattern="^0[0-9]{9}$"
+                   class="p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-black" />
+          </div>
+        </div>
+
+        <div class="mb-8">
+          <h2 class="text-2xl font-bold mb-4">Địa chỉ giao hàng</h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <select name="province" [(ngModel)]="orderData.provinceId" required
+                    (change)="onProvinceChange()"
+                    class="p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-black">
+              <option value="">Chọn Tỉnh/Thành phố *</option>
+              <option *ngFor="let p of provinces" [value]="p.ProvinceID">{{ p.ProvinceName }}</option>
+            </select>
+
+            <select name="district" [(ngModel)]="orderData.districtId" required [disabled]="!orderData.provinceId"
+                    (change)="onDistrictChange()"
+                    class="p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-black">
+              <option value="">Chọn Quận/Huyện *</option>
+              <option *ngFor="let d of districts" [value]="d.DistrictID">{{ d.DistrictName }}</option>
+            </select>
+
+            <select name="ward" [(ngModel)]="orderData.wardCode" required [disabled]="!orderData.districtId"
+                    (change)="calculateShippingFee()"
+                    class="p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-black">
+              <option value="">Chọn Phường/Xã *</option>
+              <option *ngFor="let w of wards" [value]="w.WardCode">{{ w.WardName }}</option>
+            </select>
+          </div>
+
+          <input type="text" placeholder="Địa chỉ chi tiết (số nhà, đường...) *"
+                 name="address" [(ngModel)]="orderData.address" required
+                 class="p-4 w-full border border-gray-300 rounded-lg focus:outline-none focus:border-black mb-4" />
+
+          <textarea placeholder="Ghi chú giao hàng (tùy chọn)" name="note" [(ngModel)]="orderData.note" rows="3"
+                    class="p-4 w-full border border-gray-300 rounded-lg focus:outline-none focus:border-black resize-none"></textarea>
+        </div>
+
+        <div>
+          <h2 class="text-2xl font-bold mb-4">Phương thức thanh toán</h2>
+          <div class="space-y-3">
+            <label class="flex items-center gap-3 cursor-pointer">
+              <input type="radio" name="paymentMethod" [(ngModel)]="orderData.paymentMethod" value="COD" checked />
+              <span>Thanh toán khi nhận hàng (COD)</span>
+            </label>
+            <label class="flex items-center gap-3 cursor-pointer">
+              <input type="radio" name="paymentMethod" [(ngModel)]="orderData.paymentMethod" value="Online" />
+              <span>Thanh toán online (sắp ra mắt)</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div>
+      <div class="mb-6">
+        <h1 class="text-[25px] font-bold">Product</h1>
+        <div class="space-y-6">
+          <div
+            class="flex flex-row gap-4 border-b-2"
+            *ngFor="let product of listItems"
+          >
+            <div>
+              <img
+                src="{{ product.data.image_urls[0].url }}"
+                alt=""
+                class="w-[200px]"
+              />
+            </div>
+            <div class="flex flex-col justify-around w-[500px]">
+              <div>
+                <h1 class="text-[20px] font-bold text-gray-800 mt-2">
+                  {{ product.data.product_name }}
+                </h1>
+                <p class="text-gray-500 text-[14px]">
+                  Size: <strong>{{ product.size }}</strong>
+                </p>
+              </div>
+              <div
+                class="flex flex-row justify-between items-end max-w-[500px]"
+              >
+              <div>
+                <p class="text-gray-500 text-[14px]">
+                    Quantity: <strong>{{ product.quantity }}</strong>
+                </p>
+              </div>
+              <div>
+                 <p
+                  *ngIf="product.data.saledPrice"
+                  class="text-gray-500 text-[14px]"
+                >
+                  Price:
+                  <strong class="text-[16px]"
+                    >{{
+                      formatCurrency(product.data.saledPrice * product.quantity)
+                    }}
+                    vnđ</strong
+                  >
+                </p>
+                <p
+                  *ngIf="!product.data.saledPrice"
+                  class="text-gray-500 text-[14px]"
+                >
+                  Price:
+                  <strong class="text-[16px]"
+                    >{{
+                      formatCurrency(product.data.price * product.quantity)
+                    }}
+                    vnđ</strong
+                  >
+                </p>
+              </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 p-4 border border-gray-300 rounded-lg bg-gray-50">
+          <div class="flex justify-between mb-2">
+            <span class="text-gray-600">Subtotal:</span>
+            <span>{{ formatCurrency(subtotal) }} ₫</span>
+          </div>
+          <div class="flex justify-between mb-2">
+            <span class="text-gray-600">Shipping:</span>
+            <span>{{
+              shipping === 0 ? "0" : formatCurrency(shipping) + " ₫"
+            }}</span>
+          </div>
+          <div
+            class="flex justify-between text-xl font-bold pt-3 border-t"
+          >
+            <span>Total:</span>
+            <span>{{ formatCurrency(totalPrice) }} ₫</span>
+          </div>
+        </div>
+      </div>
+
+      <button
+        (click)="onSubmit(orderForm)"
+        [disabled]="!orderForm.valid || isSubmitting"
+        class="w-full py-4 text-white bg-black text-xl font-bold rounded-lg  disabled:bg-gray-400 disabled:cursor-not-allowed transition mb-5"
+      >
+        <span *ngIf="!isSubmitting">Xác nhận đặt hàng</span>
+        <span *ngIf="isSubmitting">Đang xử lý...</span>
+      </button>
+
+      <p class="text-sm text-gray-500 text-center mt-4">
+        Bằng việc đặt hàng, bạn đồng ý với
+        <a href="#" class="text-blue-600">điều khoản dịch vụ</a> của chúng tôi.
+      </p>
+    </div>
+  </div>
+</div>

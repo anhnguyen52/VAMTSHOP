@@ -83,6 +83,11 @@ const orderSchema = new mongoose.Schema(
       default: null,
     },
 
+    totalAmount: {
+      type: Number,
+      required: true,
+    },
+
     isReturned: {
       type: Boolean,
       default: false,

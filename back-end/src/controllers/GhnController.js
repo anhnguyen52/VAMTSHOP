@@ -73,7 +73,7 @@ const getWard = async (req, res) => {
 
 const calculateFee = async (req, res) => {
   try {
-    const { to_ward_code, to_district_id, insurance_value, weight } = req.query; // Dùng query thay vì body
+    const { to_ward_code, to_district_id, insurance_value, weight } = req.query; 
 
     if (!to_ward_code || !to_district_id || !insurance_value || !weight) {
       return res

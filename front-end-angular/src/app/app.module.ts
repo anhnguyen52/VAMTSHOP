@@ -37,6 +37,8 @@ import { CreateProductComponent } from './pages/admin/product-management/create-
 import { CategoryCollectionManagementComponent } from './pages/admin/category-collection-management/category-collection-management.component';
 import { BestSellerComponent } from './pages/best-seller/best-seller.component';
 import { SaleCampaignComponent } from './pages/sale-campaign/sale-campaign.component';
+import { OrderPageComponent } from './pages/order-page/order-page.component';
+import { OrderSuccessComponent } from './pages/order-success/order-success.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -63,6 +65,8 @@ import { SaleCampaignComponent } from './pages/sale-campaign/sale-campaign.compo
     CategoryCollectionManagementComponent,
     BestSellerComponent,
     SaleCampaignComponent,
+    OrderPageComponent,
+    OrderSuccessComponent,
   ],
   imports: [
     BrowserModule,
