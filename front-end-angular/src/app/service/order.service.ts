@@ -19,12 +19,15 @@ export class OrderService {
     return this.http.get<any>(`${this.API_URL}/getDetails/${id}`);
   }
 
-  getMyOrder(userId: string): Observable<any> {
-    return this.http.get<any>(`${this.API_URL}/getMyOrders`, { params: { userId } });
+  getMyOrders(page: number = 1, limit: number = 10) {
+    return this.http.get<any>(`${this.API_URL}/getMyOrders`, {
+      params: { page, limit }
+    });
   }
 
   createOrder(orderData: any): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/create`, orderData);
+    // xử lý clear cart khi đăg hàng thành công ở bên backend 
   }
 
   updateStatus(orderId: string, status: string): Observable<any> {

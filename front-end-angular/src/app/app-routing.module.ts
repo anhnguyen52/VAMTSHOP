@@ -3,7 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home/home.component';
 import { HeaderComponent } from './components/header/header.component';
 import { LoginComponent } from './pages/authentication/login/login.component';
-import { ProfileComponent } from './pages/authentication/profile/profile.component';
 import { SignupComponent } from './pages/authentication/signup/signup.component';
 import { AuthGuard } from './pages/authentication/auth.guard';
 import { DetailProductComponent } from './pages/product/detail-product/detail-product.component';
@@ -23,18 +22,23 @@ import { SaleCampaignComponent } from './pages/sale-campaign/sale-campaign.compo
 import { BestSellerComponent } from './pages/best-seller/best-seller.component';
 import { OrderPageComponent } from './pages/order-page/order-page.component';
 import { OrderSuccessComponent } from './pages/order-success/order-success.component';
+import { ProfileComponent } from './pages/my-account/components/profile/profile.component';
+import { MyOrdersComponent } from './pages/my-account/components/my-orders/my-orders.component';
+import { MyAccountComponent } from './pages/my-account/my-account.component';
 const routes: Routes = [
   {path: '', component: HomeComponent },
   {path: 'Login', component: LoginComponent},
   {path: 'SignUp', component:SignupComponent},
-  {path: 'Profile', component: ProfileComponent, canActivate: [AuthGuard] },
   {path: 'DetailProduct/:id', component: DetailProductComponent },
   {path: 'Cart', component: CartComponent },
   {path: 'ShopAll', component: ShopAllComponent},
   {path: 'SaleCampaign', component: SaleCampaignComponent},
   {path: 'BestSeller', component: BestSellerComponent},
   {path: 'Order', component: OrderPageComponent},
-  {path: 'OrderSuccess', component: OrderSuccessComponent},
+  {path: 'OrderSuccess', component: OrderSuccessComponent, canActivate: [AuthGuard]},
+  {path: 'MyAccount', component: MyAccountComponent, canActivate: [AuthGuard]},
+  {path: 'Profile', component: ProfileComponent, canActivate: [AuthGuard]},
+  {path: 'MyOrders', component: MyOrdersComponent, canActivate: [AuthGuard]},
 
   { 
     path: 'AdminLayout', 

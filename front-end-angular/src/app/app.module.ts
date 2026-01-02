@@ -3,7 +3,6 @@ import { BrowserModule, provideClientHydration } from '@angular/platform-browser
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './pages/authentication/login/login.component';
-import { ProfileComponent } from './pages/authentication/profile/profile.component';
 import { HomeComponent } from './pages/home/home/home.component';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
@@ -39,11 +38,13 @@ import { BestSellerComponent } from './pages/best-seller/best-seller.component';
 import { SaleCampaignComponent } from './pages/sale-campaign/sale-campaign.component';
 import { OrderPageComponent } from './pages/order-page/order-page.component';
 import { OrderSuccessComponent } from './pages/order-success/order-success.component';
+import { MyAccountComponent } from './pages/my-account/my-account.component';
+import { ProfileComponent } from './pages/my-account/components/profile/profile.component';
+import { MyOrdersComponent } from './pages/my-account/components/my-orders/my-orders.component';
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    ProfileComponent,
     HomeComponent,
     HeaderComponent,
     FooterComponent,
@@ -67,6 +68,9 @@ import { OrderSuccessComponent } from './pages/order-success/order-success.compo
     SaleCampaignComponent,
     OrderPageComponent,
     OrderSuccessComponent,
+    MyAccountComponent,
+    ProfileComponent,
+    MyOrdersComponent,
   ],
   imports: [
     BrowserModule,

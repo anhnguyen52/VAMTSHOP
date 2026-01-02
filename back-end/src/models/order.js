@@ -51,6 +51,13 @@ const orderSchema = new mongoose.Schema(
       default: "Pending",
     },
 
+    orderCode: {
+      type: String,
+      unique: true,
+      required: true,
+      index: true
+    },
+    
     shippingStatus: {
       type: String,
       enum: [

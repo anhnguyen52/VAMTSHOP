@@ -5,7 +5,7 @@ const orderRouter = express.Router();
 
 orderRouter.post("/create",authUserMiddleware, createOrder);
 orderRouter.get("/getAllOrders", getAllOrders);
-orderRouter.get("/getMyOrders", getMyOrders);
+orderRouter.get("/getMyOrders",authUserMiddleware, getMyOrders);
 orderRouter.get("/getDetails/:id", getOrderDetails);
 orderRouter.put("/cancel/:id", cancelOrder);
 orderRouter.put("/updateStatus/:id", updateOrderStatus);
