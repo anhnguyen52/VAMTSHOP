@@ -1,0 +1,184 @@
+<div class="space-y-8">
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="text-center py-20">
+    <p class="text-xl text-gray-600">Loading your orders...</p>
+  </div>
+
+  <!-- No orders yet -->
+  <div *ngIf="!isLoading && orders.length === 0" class="text-center py-20 bg-gray-50 rounded-xl">
+    <p class="text-2xl text-gray-600 mb-6">You have no orders yet</p>
+    <button (click)="goToShop()" class="px-8 py-4 bg-black text-white rounded-lg hover:bg-gray-800">
+      Continue Shopping
+    </button>
+  </div>
+
+  <!-- List of orders -->
+  <div *ngFor="let order of orders" class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition">
+    <div class="bg-gradient-to-r from-gray-50 to-gray-100 p-6 flex justify-between items-center">
+      <div>
+        <p class="text-2xl font-bold">#{{ order.orderCode || order._id }}</p>
+        <p class="text-gray-600 mt-1">Order Date: {{ formatDate(order.createdAt) }}</p>
+      </div>
+      <div class="text-right">
+        <p class="text-3xl font-bold text-black">{{ formatCurrency(order.totalAmount) }}</p>
+        <span class="inline-block mt-3 px-5 py-2 rounded-full text-sm font-semibold"
+              [ngClass]="getStatusClass(order.orderStatus)">
+          {{ getStatusText(order.orderStatus) }}
+        </span>
+      </div>
+    </div>
+
+    <div class="p-6">
+      <!-- Show up to 3 products + remaining count -->
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-6">
+        <div *ngFor="let item of order.items.slice(0, 3)" class="flex items-center gap-4">
+          <img [src]="item.product?.image_urls?.[0]?.url || 'https://via.placeholder.com/80'"
+               class="w-20 h-20 object-cover rounded-lg shadow" />
+          <div>
+            <p class="font-medium text-sm">{{ item.product?.product_name }}</p>
+            <p class="text-sm text-gray-600">x{{ item.quantity }}</p>
+            <p class="text-sm font-semibold">{{ formatCurrency(item.price * item.quantity) }}</p>
+          </div>
+        </div>
+
+        <!-- Show +X if more than 3 items -->
+        <div *ngIf="order.items.length > 3" class="flex items-center justify-center">
+          <div class="w-20 h-20 bg-gray-200 rounded-lg flex items-center justify-center shadow">
+            <span class="text-2xl font-bold text-gray-600">+{{ order.items.length - 3 }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-right">
+        <button (click)="openOrderDetailModal(order)"
+                class="px-8 py-3 border-2 border-black rounded-lg font-medium hover:bg-black hover:text-white transition">
+          View Order Details
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Pagination -->
+<div *ngIf="totalPages > 1" class="mt-12 flex justify-center items-center gap-4">
+  <button
+    (click)="prevPage()"
+    [disabled]="currentPage === 1"
+    class="px-4 py-2 border rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+  >
+    Previous
+  </button>
+
+  <div class="flex gap-2">
+    <button
+      *ngFor="let page of pagesArray"
+      (click)="goToPage(page)"
+      class="w-10 h-10 rounded-lg font-medium transition"
+      [class]="currentPage === page 
+        ? 'bg-black text-white' 
+        : 'border hover:bg-gray-100'"
+    >
+      {{ page }}
+    </button>
+  </div>
+
+  <button
+    (click)="nextPage()"
+    [disabled]="currentPage === totalPages"
+    class="px-4 py-2 border rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+  >
+    Next
+  </button>
+</div>
+
+<!-- Order Details Modal -->
+<div *ngIf="selectedOrder" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+     (click)="closeModal()">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+       (click)="$event.stopPropagation()">
+    <div class="p-8 border-b">
+      <div class="flex justify-between items-start">
+        <div>
+          <h3 class="text-3xl font-bold">Order ID: #{{ selectedOrder.orderCode || selectedOrder._id }}</h3>
+          <p class="text-gray-600 mt-2">Order Date: {{ formatDate(selectedOrder.createdAt) }}</p>
+          <p class="mt-2">
+            <span class="inline-block px-5 py-2 rounded-full font-semibold text-sm"
+                  [ngClass]="getStatusClass(selectedOrder.orderStatus)">
+              {{ getStatusText(selectedOrder.orderStatus) }}
+            </span>
+          </p>
+        </div>
+        <button (click)="closeModal()" class="text-gray-400 hover:text-gray-600 text-3xl">&times;</button>
+      </div>
+    </div>
+
+    <div class="p-8">
+      <!-- Full product list -->
+      <h4 class="text-xl font-bold mb-4">Products in Order</h4>
+      <div class="space-y-4 mb-8">
+        <div *ngFor="let item of selectedOrder.items" class="flex items-center gap-6 py-4 border-b">
+          <img [src]="item.product?.image_urls?.[0]?.url || 'https://via.placeholder.com/100'"
+               class="w-24 h-24 object-cover rounded-lg" />
+          <div class="flex-1">
+            <p class="font-semibold">{{ item.product?.product_name }}</p>
+            <p class="text-gray-600">Quantity: {{ item.quantity }}</p>
+          </div>
+          <p class="font-bold text-lg">{{ formatCurrency(item.price * item.quantity) }}</p>
+        </div>
+      </div>
+
+      <!-- Shipping Information -->
+      <h4 class="text-xl font-bold mb-4">Shipping Information</h4>
+      <div class="bg-gray-50 rounded-lg p-6">
+        <p class="font-semibold">{{ selectedOrder.shippingInfo?.name }}</p>
+        <p>{{ selectedOrder.shippingInfo?.phoneNumber }}</p>
+        <p class="mt-2">
+          {{ selectedOrder.shippingInfo?.address }},<br>
+          {{ selectedOrder.shippingInfo?.wardName }}, {{ selectedOrder.shippingInfo?.districtName }},<br>
+          {{ selectedOrder.shippingInfo?.provinceName }}
+        </p>
+        <p *ngIf="selectedOrder.shippingInfo?.note" class="mt-3 text-gray-600 italic">
+          Note: {{ selectedOrder.shippingInfo?.note }}
+        </p>
+        <p *ngIf="selectedOrder.trackingNumber" class="mt-3 font-medium">
+          Tracking Number: <span class="text-blue-600">{{ selectedOrder.trackingNumber }}</span>
+        </p>
+      </div>
+
+      <!-- Payment Breakdown -->
+      <div class="mt-10 border-t pt-6">
+        <h4 class="text-xl font-bold mb-4">Payment Details</h4>
+        <div class="space-y-3 text-lg">
+          <div class="flex justify-between">
+            <span class="text-gray-600">Subtotal</span>
+            <span class="font-medium">{{ formatCurrency(calculateSubtotal(selectedOrder)) }}</span>
+          </div>
+
+          <div class="flex justify-between">
+            <span class="text-gray-600">Shipping Fee</span>
+            <span class="font-medium">
+              {{ selectedOrder.shippingInfo?.fee > 0 
+                 ? formatCurrency(selectedOrder.shippingInfo.fee) 
+                 : 'Free' }}
+            </span>
+          </div>
+
+          <div *ngIf="selectedOrder.discountAmount > 0" class="flex justify-between text-green-600">
+            <span>Discount Code</span>
+            <span>-{{ formatCurrency(selectedOrder.discountAmount) }}</span>
+          </div>
+
+          <div *ngIf="selectedOrder.pointUsedAmount > 0" class="flex justify-between text-green-600">
+            <span>Points Used</span>
+            <span>-{{ formatCurrency(selectedOrder.pointUsedAmount) }}</span>
+          </div>
+
+          <div class="flex justify-between text-xl font-bold pt-4 border-t">
+            <span>Total Amount</span>
+            <span class="text-black">{{ formatCurrency(selectedOrder.totalAmount) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

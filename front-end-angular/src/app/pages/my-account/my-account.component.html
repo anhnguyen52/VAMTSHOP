@@ -1,0 +1,41 @@
+<app-header class="sticky top-0 z-50"></app-header>
+
+<div class="max-w-7xl min-h-[50vh] mx-auto my-10 px-4">
+  <p class="text-3xl font-bold">My Account</p>
+
+  <div class="border-b border-gray-200 mb-8">
+    <nav class="flex space-x-8">
+      <button
+        (click)="setTab('profile')"
+        class="py-4 px-1 border-b-4 font-medium text-lg transition"
+        [class]="activeTab === 'profile' 
+          ? 'border-black text-black' 
+          : 'border-transparent text-gray-500 hover:text-black'"
+      >
+        My Profile
+      </button>
+      <button
+        (click)="setTab('orders')"
+        class="py-4 px-1 border-b-4 font-medium text-lg transition"
+        [class]="activeTab === 'orders' 
+          ? 'border-black text-black' 
+          : 'border-transparent text-gray-500 hover:text-black'"
+      >
+        My Orders
+      </button>
+    </nav>
+  </div>
+
+  <div class="mt-8">
+    <app-profile
+      *ngIf="activeTab === 'profile'"
+      (profileUpdated)="onProfileUpdated()"
+    ></app-profile>
+
+    <app-my-orders
+      *ngIf="activeTab === 'orders'"
+    ></app-my-orders>
+  </div>
+</div>
+
+<app-footer></app-footer>

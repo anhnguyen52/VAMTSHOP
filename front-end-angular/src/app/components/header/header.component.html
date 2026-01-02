@@ -14,7 +14,7 @@
                 class="text-[30px] hover:text-gray-300 transition duration-500">
             </fa-icon>
           </button>
-          <form class="relative">
+          <!-- <form class="relative">
             <input 
               type="text" 
               placeholder="Search" 
@@ -35,7 +35,7 @@
                 }"
               ></fa-icon>
             </button>
-          </form>
+          </form> -->
 
     </div>
 
@@ -101,7 +101,7 @@
           <li><a routerLink="/SaleCampaign" class="text-gray-800 font-[600] text-[20px] hover:text-gray-600 nav-link">Sale</a></li>
           <li><a routerLink="/Shop-all" class="text-gray-800 font-[600] text-[20px] hover:text-gray-600 nav-link">Recruitment</a></li>
 
-          <li class="border-b-2 border-gray-300">
+          <!-- <li class="border-b-2 border-gray-300">
             <form>
               <input type="text" placeholder="Search" class="p-2 w-[250px] h-[50px] mt-10" />
               <button type="submit">
@@ -111,8 +111,9 @@
                 </fa-icon>
               </button>
             </form>
-          </li>
+          </li> -->
           <br>
+          <li *ngIf="isLogin"><a routerLink="/MyAccount" class="text-gray-800 font-[400] text-[13px] hover:text-gray-600 nav-link">My Account / My Orders</a></li>
           <li *ngIf="!isLogin"><a routerLink="/Login" class="text-gray-800 font-[400] text-[13px] hover:text-gray-600 nav-link">Log in</a></li>
           <li *ngIf="!isLogin"><a routerLink="/SignUp" class="text-gray-800 font-[400] text-[13px] hover:text-gray-600 nav-link">Create account</a></li>
           <li *ngIf="isLogin"><a (click)="onLogout(userId)" class="text-gray-800 font-[400] text-[13px] hover:text-gray-600 nav-link">Log out</a></li>

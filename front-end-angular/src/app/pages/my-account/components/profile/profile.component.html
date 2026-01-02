@@ -1,0 +1,78 @@
+<div class="bg-white rounded-xl shadow-lg p-8">
+  <div class="flex justify-between items-start mb-8">
+    <div class="flex items-center gap-6">
+      <img
+        [src]="user.avatar || 'https://via.placeholder.com/120?text=User'"
+        alt="Avatar"
+        class="w-28 h-28 rounded-full object-cover border-4 border-gray-200"
+      />
+      <div>
+        <h2 class="text-3xl font-bold">{{ fullName }}</h2>
+        <p class="text-gray-600 mt-1">{{ user.email }}</p>
+        <p class="text-sm text-gray-500 mt-2">Vai trò: {{ user.role === 'ADMIN' ? 'Quản trị viên' : 'Khách hàng' }}</p>
+      </div>
+    </div>
+
+    <button
+      (click)="toggleEdit()"
+      class="px-6 py-3 border-2 border-black rounded-lg font-medium hover:bg-black hover:text-white transition"
+    >
+      {{ isEditing ? 'Hủy' : 'Chỉnh sửa thông tin' }}
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
+    <div>
+      <label class="block text-sm font-semibold text-gray-700 mb-2">Họ</label>
+      <input
+        [(ngModel)]="user.last_name"
+        [disabled]="!isEditing"
+        class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-black transition"
+        [class.bg-gray-50]="!isEditing"
+      />
+    </div>
+
+    <div>
+      <label class="block text-sm font-semibold text-gray-700 mb-2">Tên</label>
+      <input
+        [(ngModel)]="user.first_name"
+        [disabled]="!isEditing"
+        class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-black transition"
+        [class.bg-gray-50]="!isEditing"
+      />
+    </div>
+
+    <div>
+      <label class="block text-sm font-semibold text-gray-700 mb-2">Số điện thoại</label>
+      <input
+        [(ngModel)]="user.phone"
+        [disabled]="!isEditing"
+        placeholder="Ví dụ: 0987654321"
+        class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-black transition"
+        [class.bg-gray-50]="!isEditing"
+      />
+    </div>
+
+    <div>
+      <label class="block text-sm font-semibold text-gray-700 mb-2">Địa chỉ giao hàng mặc định</label>
+      <input
+        [(ngModel)]="user.address"
+        [disabled]="!isEditing"
+        placeholder="Số nhà, đường, phường/xã..."
+        class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-black transition"
+        [class.bg-gray-50]="!isEditing"
+      />
+    </div>
+  </div>
+
+  <!-- Nút lưu khi đang chỉnh sửa -->
+  <div *ngIf="isEditing" class="mt-10 text-right">
+    <button
+      (click)="saveProfile()"
+      [disabled]="isSaving"
+      class="px-10 py-4 bg-black text-white text-lg font-bold rounded-lg hover:bg-gray-800 transition disabled:opacity-50"
+    >
+      {{ isSaving ? 'Đang lưu...' : 'Lưu thay đổi' }}
+    </button>
+  </div>
+</div>

@@ -43,7 +43,7 @@ export class CartComponent implements OnInit {
     const user = localStorage.getItem('user');
     const localCartJson = localStorage.getItem('cartItems');
     const localCart = localCartJson ? JSON.parse(localCartJson) : [];
-    console.log("Giỏ hàng trên localStorage: ", localCart);
+    // console.log("Giỏ hàng trên localStorage: ", localCart);
     if (user) {
       const userData = JSON.parse(user);
       this.userId = userData._id;
@@ -106,7 +106,7 @@ export class CartComponent implements OnInit {
     Promise.all(requests)
       .then(results => {
         this.listItems = results;
-        console.log("Chi tiết sản phẩm trong giỏ hàng: ", this.listItems);
+        // console.log("Chi tiết sản phẩm trong giỏ hàng: ", this.listItems);
         this.calculateTotal();
       })
       .catch(error => console.error("Lỗi khi lấy sản phẩm:", error))

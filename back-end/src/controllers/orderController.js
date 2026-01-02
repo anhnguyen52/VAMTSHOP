@@ -8,6 +8,7 @@ const { applySaleCampaignsToProducts } = require("../utils/applyDiscount");
 const { GHN_API_URL, GHN_TOKEN, GHN_SHOP_ID, GHN_SERVICE_TYPE_NHE } =
   process.env;
 const axios = require("axios");
+const Counter = require("../models/counter");
 
 const getAllOrders = async (req, res) => {
   try {
@@ -116,20 +117,33 @@ const createOrder = async (req, res) => {
       });
     }
 
+    const today = new Date();
+    const dateStr = today.toISOString().slice(2, 10).replace(/-/g, ''); // 251231 (ngày 31/12/2025)
+    const counterId = `order_${dateStr}`; // Mỗi ngày có counter riêng → tự reset về 0001 mỗi ngày mới
+
+    const counter = await Counter.findOneAndUpdate(
+      { _id: counterId },
+      { $inc: { seq: 1 } },
+      { new: true, upsert: true } // upsert: tự tạo nếu chưa có
+    );
+
+    const seqPadded = counter.seq.toString().padStart(4, '0'); // 0001, 0002...
+    const orderCode = `DH${dateStr}${seqPadded}`; // Ví dụ: DH2512310001
+
     const newOrder = new Order({
       user: userId,
       items,
       shippingInfo,
       paymentMethod,
       discountUsed,
-      pointUsed,
-      paymentStatus: "Pending",
-      orderStatus: "Pending",
+      pointUsed: pointUsedAmount,
       subtotal: calculatedSubtotal,
       discountAmount,
-      pointUsedAmount,
       shippingFee: calculatedShippingFee,
-      totalAmount
+      totalAmount,
+      orderCode,
+      paymentStatus: "Pending",
+      orderStatus: "Pending",
     });
 
     const savedOrder = await newOrder.save();
@@ -153,11 +167,8 @@ const createOrder = async (req, res) => {
     await sendEmail(
       user.email,
       {
-        orderId: savedOrder._id.toString(),
-        paymentMethod:
-          paymentMethod === "COD"
-            ? "Thanh toán khi nhận hàng"
-            : "Thanh toán trực tuyến",
+        orderId: savedOrder.orderCode, // ← Đổi từ _id sang orderCode
+        paymentMethod: paymentMethod === "COD" ? "Thanh toán khi nhận hàng" : "Thanh toán trực tuyến",
         totalAmount,
         itemsHtml,
         shippingInfo: shippingInfoStr,
@@ -165,7 +176,11 @@ const createOrder = async (req, res) => {
       "orderConfirmation"
     );
 
-    res.status(201).json({ data: savedOrder, totalAmount });
+    res.status(201).json({ 
+      data: savedOrder, 
+      orderCode: savedOrder.orderCode, // Frontend sẽ dùng cái này hiển thị
+      totalAmount 
+    });
   } catch (error) {
     console.error("Error creating order:", error);
     res.status(500).json({ message: error.message });
@@ -225,10 +240,32 @@ const updateBoxInfo = async (req, res) => {
 
 async function getMyOrders(req, res) {
   try {
-    const orders = await Order.find({ user: req.user._id })
-      .populate("items.product", "product_name images price")
-      .sort({ createdAt: -1 });
-    return res.json({ data: orders });
+    if (!req.user?.id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const orders = await Order.find({ user: req.user.id })
+      .populate("items.product", "product_name image_urls price saledPrice")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const total = await Order.countDocuments({ user: req.user.id });
+
+    return res.json({
+      data: orders,
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+        totalOrders: total,
+        hasNext: page < Math.ceil(total / limit),
+        hasPrev: page > 1
+      }
+    });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Server error" });
